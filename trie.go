@@ -3,18 +3,21 @@ package trie
 import (
 	"fmt"
 	"strings"
+	"sync"
 )
 
 // type letter rune
 type Node struct {
 	children map[rune]*Node
 	isEnd    bool
+	mtx      *sync.RWMutex
 }
 
 func NewTrie() *Node {
 	return &Node{
 		children: make(map[rune]*Node),
 		isEnd:    false,
+		mtx:      new(sync.RWMutex),
 	}
 }
 
