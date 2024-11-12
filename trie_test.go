@@ -6,23 +6,24 @@ import (
 )
 
 var (
-	sentence = "Round the ragged rocks the ragged rascals ran"
+	sentence1 = "Round the ragged rocks the ragged rascals ran"
+	sentence2 = "Sie sind Ärzte und haben zwölf Bücher veröffentlicht"
 )
 
 func TestTrieSentence(t *testing.T) {
 	trie := NewTrie()
-	for _, word := range strings.Split(sentence, " ") {
+	for _, word := range strings.Split(sentence2, " ") {
 		trie.Add(word)
 	}
 
-	if !trie.Search("rocks") {
-		t.Error("Expected to find 'rocks' in trie")
+	if !trie.Search("Ärzte") {
+		t.Error("Expected to find 'Ärzte' in trie")
 	}
-	if !trie.Search("Rocks") {
-		t.Error("Expected to find 'Rocks' in trie")
+	if !trie.Search("zwölf") {
+		t.Error("Expected to find 'zwölf' in trie")
 	}
-	if !trie.Search("th") {
-		t.Error("Expected to find 'th' in trie")
+	if trie.Contains("ver") == 0 {
+		t.Error("Expected to find 'ver' in trie")
 	}
 }
 func TestTrieBasicOperations(t *testing.T) {
@@ -42,9 +43,9 @@ func TestTrieBasicOperations(t *testing.T) {
 	// Test prefix search
 	trie.Add("help")
 	trie.Add("hell")
-	// if !trie.StartsWith("hel") {
-	// 	t.Error("Expected to find prefix 'hel' in trie")
-	// }
+	if trie.Contains("hel") == 0 {
+		t.Error("Expected to find prefix 'hel' in trie")
+	}
 
 	// Test case sensitivity
 	if trie.Search("Hello") {
@@ -74,14 +75,14 @@ func TestTrieOverlappingWords(t *testing.T) {
 	}
 
 	// Test all prefixes
-	// for _, word := range words {
-	// 	if !trie.Search(word) {
-	// 		t.Errorf("Expected to find '%s' in trie", word)
-	// 	}
-	// 	if !trie.StartsWith(word) {
-	// 		t.Errorf("Expected '%s' to be a valid prefix", word)
-	// 	}
-	// }
+	for _, word := range words {
+		if !trie.Search(word) {
+			t.Errorf("Expected to find '%s' in trie", word)
+		}
+		if trie.Contains(word) == 0 {
+			t.Errorf("Expected '%s' to be a valid prefix", word)
+		}
+	}
 }
 
 func TestTrieSpecialCharacters(t *testing.T) {
