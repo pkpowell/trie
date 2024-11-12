@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	sentence1 = "Round the ragged rocks the ragged rascals ran"
-	sentence2 = "Sie sind Ärzte und haben zwölf Bücher veröffentlicht"
+	sentence1 = "Blindtexte werden ebenfalls zur Demonstration der Gestalt verschiedener Schrifttypen und zu Layoutzwecken verwendet. Sie ergeben in der Regel keinen inhaltlichen Sinn. Aufgrund ihrer verbreiteten Funktion als Fülltext für das Layout kommt einer Nicht-Lesbarkeit besondere Bedeutung zu, da die menschliche Wahrnehmung u.a. darauf ausgerichtet ist, bestimmte Muster und Wiederholungen zu erkennen. Ist die Verteilung der Buchstaben und die Länge der \"Worte\" willkürlich, lenkt beispielsweise nichts von der Beurteilung der Wirkung und Lesbarkeit verschiedener Schriftarten (Typografie) sowie der Verteilung des Textes auf der Seite (Layout oder Satzspiegel) ab. Deshalb bestehen Blindtexte meist aus einer mehr oder weniger willkürlichen Folge von Wörtern oder Silben. Wiederholungsmuster können also nicht den Gesamteindruck trüben und Schriftarten so besser miteinander verglichen werden. Dabei ist natürlich von Vorteil, wenn der Blindtext halbwegs realistisch erscheint, damit die Wirkung des Layouts der späteren Publikation nicht beeinträchtigt wird."
+	sentence2 = "Als bekanntester Blindtext gilt der Text \"Lorem ipsum\", der seinen Ursprung im 16. Jahrhundert haben soll. Lorem ipsum ist in einer pseudo-lateinischen Sprache verfasst, die ungefähr dem \"natürlichen\" Latein entspricht. In Ihm finden sich eine Reihe realer lateinischer Wörter. Auch dieser Blindtext ist unverständlich gehalten, imitiert jedoch den Rhythmus der meisten europäischen Sprachen in lateinischer Schrift. Der Vorteil des lateinischen Ursprungs und der relativen Sinnlosigkeit von Lorem ipsum ist, dass der Text weder die Aufmerksamkeit des Betrachters auf sich zieht noch von der Gestaltung ablenkt."
 )
 
 func TestTrieSentence(t *testing.T) {
@@ -16,14 +16,14 @@ func TestTrieSentence(t *testing.T) {
 		trie.Add(word)
 	}
 
-	if !trie.Search("Ärzte") {
-		t.Error("Expected to find 'Ärzte' in trie")
+	if !trie.Search("Ursprung") {
+		t.Error("Expected to find 'Ursprung' in trie")
 	}
-	if !trie.Search("zwölf") {
-		t.Error("Expected to find 'zwölf' in trie")
+	if !trie.Search("gilt") {
+		t.Error("Expected to find 'gilt' in trie")
 	}
-	if trie.Contains("ver") == 0 {
-		t.Error("Expected to find 'ver' in trie")
+	if trie.Contains("ert") == 0 {
+		t.Error("Expected to find 'ert' in trie")
 	}
 }
 func TestTrieBasicOperations(t *testing.T) {
