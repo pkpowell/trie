@@ -25,6 +25,11 @@ func TestTrieSentence(t *testing.T) {
 	if trie.Contains("ert") == 0 {
 		t.Error("Expected to find 'ert' in trie")
 	}
+	if trie.Contains("end") == 0 {
+		t.Error("Expected to find 'end' in trie")
+	}
+	t.Logf("Found %d words containing <text> in trie", trie.Contains("text"))
+	t.Logf("Found %d words containing <Latein> in trie", trie.Contains("Latein"))
 }
 func TestTrieBasicOperations(t *testing.T) {
 	trie := NewTrie()

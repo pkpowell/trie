@@ -33,6 +33,7 @@ func (current *Node) Add(word string) {
 	current.isEnd = true
 }
 
+// search for exact word
 func (current *Node) Search(word string) bool {
 	for _, letter := range strings.ToLower(word) {
 		if _, ok := current.children[letter]; !ok {
@@ -43,13 +44,15 @@ func (current *Node) Search(word string) bool {
 	return current.isEnd
 }
 
-func (current *Node) StartsWith(word string) {
+// func (current *Node) StartsWith(word string) {
 
-}
-func (current *Node) EndsWith(word string) {
+// }
+// func (current *Node) EndsWith(word string) {
 
-}
-func (current *Node) Contains(word string) int {
+// }
+// search for partial string. Returns number of matches
+func (current *Node) Contains(word string) (matches int) {
+	word = strings.ToLower(word)
 	initial := rune(word[0])
 	for range current.children {
 		if _, ok := current.children[initial]; !ok {
@@ -60,10 +63,12 @@ func (current *Node) Contains(word string) int {
 			if !ok {
 				continue
 			}
+			matches++
 			current = current.children[letter]
 		}
-		fmt.Printf("Child count: %d, %s\n", len(current.children), word)
-		return len(current.children)
+
+		fmt.Printf("Child count: %d, %s\n", matches, word)
+
 	}
-	return 0
+	return matches
 }
