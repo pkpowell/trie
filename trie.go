@@ -1,5 +1,7 @@
 package trie
 
+import "strings"
+
 // type letter rune
 type Node struct {
 	children map[rune]*Node
@@ -15,7 +17,7 @@ func NewTrie() *Node {
 
 func (root *Node) Add(word string) {
 	current := root
-	for _, letter := range word {
+	for _, letter := range strings.ToLower(word) {
 		if _, ok := current.children[letter]; !ok {
 			current.children[letter] = NewTrie()
 		}
@@ -26,7 +28,7 @@ func (root *Node) Add(word string) {
 
 func (root *Node) Search(word string) bool {
 	current := root
-	for _, letter := range word {
+	for _, letter := range strings.ToLower(word) {
 		if _, ok := current.children[letter]; !ok {
 			return false
 		}

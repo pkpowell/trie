@@ -1,9 +1,30 @@
 package trie
 
 import (
+	"strings"
 	"testing"
 )
 
+var (
+	sentence = "Round the ragged rocks the ragged rascals ran"
+)
+
+func TestTrieSentence(t *testing.T) {
+	trie := NewTrie()
+	for _, word := range strings.Split(sentence, " ") {
+		trie.Add(word)
+	}
+
+	if !trie.Search("rocks") {
+		t.Error("Expected to find 'rocks' in trie")
+	}
+	if !trie.Search("Rocks") {
+		t.Error("Expected to find 'Rocks' in trie")
+	}
+	if !trie.Search("th") {
+		t.Error("Expected to find 'th' in trie")
+	}
+}
 func TestTrieBasicOperations(t *testing.T) {
 	trie := NewTrie()
 
