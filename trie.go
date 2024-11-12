@@ -51,24 +51,42 @@ func (current *Node) Search(word string) bool {
 
 // }
 // search for partial string. Returns number of matches
-func (current *Node) Contains(word string) (matches int) {
+func (root *Node) Contains(word string) (matches int) {
 	word = strings.ToLower(word)
-	initial := rune(word[0])
-	for range current.children {
-		if _, ok := current.children[initial]; !ok {
-			continue
-		}
-		for _, letter := range strings.ToLower(word) {
-			_, ok := current.children[letter]
-			if !ok {
-				continue
+	var scan func(*Node)
+	// wordLen := len(word)
+	scan = func(root *Node) {
+		count := 0
+		for r, node := range root.children {
+			// fmt.Printf("Child node: %s\n", word)
+			if byte(r) == word[count] {
+				count++
+				if count == len(word) {
+					matches++
+					count = 0
+				}
+			} else {
+				count = 0
 			}
-			matches++
-			current = current.children[letter]
+			scan(node)
+			// for _, letter := range word {
+			// 	n, ok := node.children[letter]
+			// 	// fmt.Printf("Node %#v\n", node.children)
+			// 	if !ok {
+			// 		fmt.Printf("Letter %s not found in %s\n", string(letter), word)
+			// 		scan(node)
+			// 	}
+			// 	count++
+			// 	node = n
+			// }
+			// if count == len(word) {
+			// 	matches++
+			// }
+
 		}
-
-		fmt.Printf("Child count: %d, %s\n", matches, word)
-
+		fmt.Printf("Child count: %d\n", count)
+		// return matches
 	}
+	scan(root)
 	return matches
 }
