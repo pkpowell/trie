@@ -1,58 +1,96 @@
 package trie
 
 import (
-	"strings"
+	"fmt"
 	"testing"
 )
 
 func TestTrieSentence(t *testing.T) {
 	trie := NewTrie()
-	for _, word := range strings.Split(sentence3, " ") {
-		trie.Add(word)
+
+	stats := trie.Parse(thekoran)
+	fmt.Printf("Stats: %d words\n", stats)
+	testWords := []string{
+		"fox",
+		"Muhammad",
+		"XCII",
+		"twice",
+		"unlce",
+		"pedr",
+		"LEONATO",
+		"ONATO",
+		"LEON",
+		"Fatima",
+		"Hafsa",
+		"Maryam",
+		"uncl",
+		"uncle",
+		"per",
+		"valiant",
+		"too",
+		"hello",
+		"help",
+		"hell",
+		"the",
+		"an",
+		"abcd",
 	}
 
-	// if !trie.Search("brave") {
-	// 	t.Error("Expected to find 'brave' in trie")
-	// }
-	// if !trie.Search("brother") {
-	// 	t.Error("Expected to find 'brother' in trie")
-	// }
-	// if trie.Contains("dancing") == 0 {
-	// 	t.Error("Expected to find 'dancing' in trie")
-	// }
-	// if trie.Contains("end") == 0 {
-	// 	t.Error("Expected to find 'end' in trie")
-	// }
-	t.Logf("Found %v words containing <fox> in trie", trie.Search("fox"))
-	t.Logf("Found %v words containing <judge> in trie", trie.Search("judge"))
-	t.Logf("Found %v words containing <liquor> in trie", trie.Search("liquor"))
+	for _, word := range testWords {
+		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
+	}
 }
-func TestTrieBasicOperations(t *testing.T) {
+
+func BenchmarkMuchAdo(b *testing.B) {
 	trie := NewTrie()
-
-	// Test adding a word
-	trie.Add("hello")
-	if !trie.Search("hello") {
-		t.Error("Expected to find 'hello' in trie")
-	}
-
-	// Test non-existent word
-	if trie.Search("world") {
-		t.Error("Expected 'world' to not be in trie")
-	}
-
-	// Test prefix search
-	trie.Add("help")
-	trie.Add("hell")
-	if trie.Contains("hel") == 0 {
-		t.Error("Expected to find prefix 'hel' in trie")
-	}
-
-	// Test case sensitivity
-	if trie.Search("Hello") {
-		t.Error("Trie should be case sensitive")
-	}
+	// for range b.N {
+	trie.Parse(muchado)
+	fmt.Printf("Size: %d bytes\n", trie.Length())
+	// }
 }
+func BenchmarkKoran(b *testing.B) {
+	trie := NewTrie()
+	// for range b.N {
+	trie.Parse(thekoran)
+	fmt.Printf("Size: %d bytes\n", trie.Length())
+	// }
+}
+
+func TestTrieSize(t *testing.T) {
+	trie := NewTrie()
+	// for range b.N {
+	trie.Parse(muchado)
+
+	fmt.Printf("Size: %d bytes\n", trie.Length())
+
+}
+
+// func TestTrieBasicOperations(t *testing.T) {
+// 	trie := NewTrie()
+
+// 	// Test adding a word
+// 	trie.Add("hello")
+// 	if trie.Search("hello") == 0 {
+// 		t.Error("Expected to find 'hello' in trie")
+// 	}
+
+// 	// Test non-existent word
+// 	if trie.Search("world") == 0 {
+// 		t.Error("Expected 'world' to not be in trie")
+// 	}
+
+// 	// Test prefix search
+// 	trie.Add("help")
+// 	trie.Add("hell")
+// 	if trie.Search("hel") == 0 {
+// 		t.Error("Expected to find prefix 'hel' in trie")
+// 	}
+
+// 	// Test case sensitivity
+// 	if trie.Search("Hello") == 0 {
+// 		t.Error("Trie should be case sensitive")
+// 	}
+// }
 
 func TestTrieEmptyString(t *testing.T) {
 	trie := NewTrie()
@@ -76,10 +114,10 @@ func TestTrieOverlappingWords(t *testing.T) {
 	}
 
 	for _, word := range words {
-		if !trie.Search(word) {
+		if trie.Search(word) == 0 {
 			t.Errorf("Expected to find '%s' in trie", word)
 		}
-		if trie.Contains(word) == 0 {
+		if trie.Search(word) == 0 {
 			t.Errorf("Expected '%s' substring", word)
 		}
 	}

@@ -2,7 +2,11 @@ package trie
 
 var (
 	sentence3 = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
-	muchado   = `ACT I
+
+	// sentence1 = `Blindtexte werden ebenfalls zur Demonstration der Gestalt verschiedener Schrifttypen und zu Layoutzwecken verwendet. Sie ergeben in der Regel keinen inhaltlichen Sinn. Aufgrund ihrer verbreiteten Funktion als Fülltext für das Layout kommt einer Nicht-Lesbarkeit besondere Bedeutung zu, da die menschliche Wahrnehmung u.a. darauf ausgerichtet ist, bestimmte Muster und Wiederholungen zu erkennen. Ist die Verteilung der Buchstaben und die Länge der "Worte" willkürlich, lenkt beispielsweise nichts von der Beurteilung der Wirkung und Lesbarkeit verschiedener Schriftarten (Typografie) sowie der Verteilung des Textes auf der Seite (Layout oder Satzspiegel) ab. Deshalb bestehen Blindtexte meist aus einer mehr oder weniger willkürlichen Folge von Wörtern oder Silben. Wiederholungsmuster können also nicht den Gesamteindruck trüben und Schriftarten so besser miteinander verglichen werden. Dabei ist natürlich von Vorteil, wenn der Blindtext halbwegs realistisch erscheint, damit die Wirkung des Layouts der späteren Publikation nicht beeinträchtigt wird.`
+	// sentence2 = `Als bekanntester Blindtext gilt der Text "Lorem ipsum", der seinen Ursprung im 16. Jahrhundert haben soll. Lorem ipsum ist in einer pseudo-lateinischen Sprache verfasst, die ungefähr dem "natürlichen" Latein entspricht. In Ihm finden sich eine Reihe realer lateinischer Wörter. Auch dieser Blindtext ist unverständlich gehalten, imitiert jedoch den Rhythmus der meisten europäischen Sprachen in lateinischer Schrift. Der Vorteil des lateinischen Ursprungs und der relativen Sinnlosigkeit von Lorem ipsum ist, dass der Text weder die Aufmerksamkeit des Betrachters auf sich zieht noch von der Gestaltung ablenkt.`
+
+	muchado = `ACT I
 SCENE I. Before LEONATO'S house.
 Enter LEONATO, HERO, and BEATRICE, with a Messenger
 LEONATO
@@ -3770,6 +3774,4 @@ Strike up, pipers.
 Dance
 
 Exeunt`
-	// sentence1 = `Blindtexte werden ebenfalls zur Demonstration der Gestalt verschiedener Schrifttypen und zu Layoutzwecken verwendet. Sie ergeben in der Regel keinen inhaltlichen Sinn. Aufgrund ihrer verbreiteten Funktion als Fülltext für das Layout kommt einer Nicht-Lesbarkeit besondere Bedeutung zu, da die menschliche Wahrnehmung u.a. darauf ausgerichtet ist, bestimmte Muster und Wiederholungen zu erkennen. Ist die Verteilung der Buchstaben und die Länge der "Worte" willkürlich, lenkt beispielsweise nichts von der Beurteilung der Wirkung und Lesbarkeit verschiedener Schriftarten (Typografie) sowie der Verteilung des Textes auf der Seite (Layout oder Satzspiegel) ab. Deshalb bestehen Blindtexte meist aus einer mehr oder weniger willkürlichen Folge von Wörtern oder Silben. Wiederholungsmuster können also nicht den Gesamteindruck trüben und Schriftarten so besser miteinander verglichen werden. Dabei ist natürlich von Vorteil, wenn der Blindtext halbwegs realistisch erscheint, damit die Wirkung des Layouts der späteren Publikation nicht beeinträchtigt wird.`
-	// sentence2 = `Als bekanntester Blindtext gilt der Text "Lorem ipsum", der seinen Ursprung im 16. Jahrhundert haben soll. Lorem ipsum ist in einer pseudo-lateinischen Sprache verfasst, die ungefähr dem "natürlichen" Latein entspricht. In Ihm finden sich eine Reihe realer lateinischer Wörter. Auch dieser Blindtext ist unverständlich gehalten, imitiert jedoch den Rhythmus der meisten europäischen Sprachen in lateinischer Schrift. Der Vorteil des lateinischen Ursprungs und der relativen Sinnlosigkeit von Lorem ipsum ist, dass der Text weder die Aufmerksamkeit des Betrachters auf sich zieht noch von der Gestaltung ablenkt.`
 )
