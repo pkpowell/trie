@@ -1,7 +1,8 @@
 package trie
 
 var (
-	muchado = `ACT I
+	sentence3 = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
+	muchado   = `ACT I
 SCENE I. Before LEONATO'S house.
 Enter LEONATO, HERO, and BEATRICE, with a Messenger
 LEONATO

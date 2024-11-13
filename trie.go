@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+var replacer = strings.NewReplacer(".", "", ",", "", "?", "", "!", "", ":", "", ";", "", "'s", "", "\n", " ", "'ll", " will")
+
 // type letter rune
 type Node struct {
 	children map[rune]*Node
@@ -24,6 +26,8 @@ func NewTrie() *Node {
 var newNode = NewTrie
 
 func (current *Node) Add(word string) {
+	// replacer := strings.NewReplacer("-", ".", "\"", "_")
+	word = replacer.Replace(word)
 	for _, letter := range strings.ToLower(word) {
 		_, ok := current.children[letter]
 		if !ok {
@@ -59,9 +63,19 @@ func (root *Node) Contains(word string) (matches int) {
 	wordLen := len(word)
 	fmt.Printf("Searching for %s, %d\n", word, len(root.children))
 	// r := []rune(word)
+
 	count := 0
-	scan = func(root *Node) {
-		for r, node := range root.children {
+	scan = func(node *Node) {
+		for r, node := range node.children {
+			// if parent != 0 {
+			// 	fmt.Printf("%s", string(parent))
+			// 	parent = 0
+			// }
+			if node.isEnd {
+				fmt.Printf("%s ", string(r))
+			} else {
+				fmt.Printf("%s", string(r))
+			}
 			if r == letters[count] {
 				// fmt.Printf("Child node: %c, %c\n", r, letters[count])
 				count++
@@ -72,6 +86,7 @@ func (root *Node) Contains(word string) (matches int) {
 			} else {
 				count = 0
 			}
+			// fmt.Printf(" <leader? %s> ", string(r))
 			scan(node)
 			// for _, letter := range word {
 			// 	n, ok := node.children[letter]

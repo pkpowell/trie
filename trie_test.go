@@ -7,7 +7,7 @@ import (
 
 func TestTrieSentence(t *testing.T) {
 	trie := NewTrie()
-	for _, word := range strings.Split(muchado, " ") {
+	for _, word := range strings.Split(sentence3, " ") {
 		trie.Add(word)
 	}
 
@@ -23,9 +23,9 @@ func TestTrieSentence(t *testing.T) {
 	// if trie.Contains("end") == 0 {
 	// 	t.Error("Expected to find 'end' in trie")
 	// }
-	t.Logf("Found %d words containing <dancing> in trie", trie.Contains("dancing"))
-	t.Logf("Found %d words containing <pipers> in trie", trie.Contains("pipers"))
-	t.Logf("Found %d words containing <flout> in trie", trie.Contains("flout"))
+	t.Logf("Found %d words containing <fox> in trie", trie.Contains("fox"))
+	t.Logf("Found %d words containing <judge> in trie", trie.Contains("judge"))
+	t.Logf("Found %d words containing <liquor> in trie", trie.Contains("liquor"))
 }
 func TestTrieBasicOperations(t *testing.T) {
 	trie := NewTrie()
