@@ -26,16 +26,23 @@ func NewTrie() *Node {
 var newNode = NewTrie
 
 func (current *Node) Add(word string) {
+	if len(word) < 3 {
+		return
+	}
 	// replacer := strings.NewReplacer("-", ".", "\"", "_")
 	word = replacer.Replace(word)
-	for _, letter := range strings.ToLower(word) {
-		_, ok := current.children[letter]
-		if !ok {
-			current.children[letter] = newNode()
+	limit := len(word) - 2
+	for i := range limit {
+		sub := word[i:limit]
+		for _, letter := range strings.ToLower(sub) {
+			_, ok := current.children[letter]
+			if !ok {
+				current.children[letter] = newNode()
+			}
+			current = current.children[letter]
 		}
-		current = current.children[letter]
+		current.isEnd = true
 	}
-	current.isEnd = true
 }
 
 // search for exact word

@@ -23,9 +23,9 @@ func TestTrieSentence(t *testing.T) {
 	// if trie.Contains("end") == 0 {
 	// 	t.Error("Expected to find 'end' in trie")
 	// }
-	t.Logf("Found %d words containing <fox> in trie", trie.Contains("fox"))
-	t.Logf("Found %d words containing <judge> in trie", trie.Contains("judge"))
-	t.Logf("Found %d words containing <liquor> in trie", trie.Contains("liquor"))
+	t.Logf("Found %v words containing <fox> in trie", trie.Search("fox"))
+	t.Logf("Found %v words containing <judge> in trie", trie.Search("judge"))
+	t.Logf("Found %v words containing <liquor> in trie", trie.Search("liquor"))
 }
 func TestTrieBasicOperations(t *testing.T) {
 	trie := NewTrie()
