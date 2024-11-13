@@ -2,35 +2,38 @@ package trie
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
 type Node struct {
-	Children map[rune]*Node `json:"children"`
-	IsEnd    bool           `json:"isEnd"`
-	Count    int            `json:"count"`
-	Tags     []string       `json:"tags"`
+	Children  map[rune]*Node `json:"children"`
+	IsEnd     bool           `json:"isEnd"`
+	Count     int            `json:"count"`
+	Tags      []string       `json:"tags"`
+	WordCount int            `json:"wordCount"`
 }
 
 // NewTrie initializes a new Trie
 func NewTrie() *Node {
 	return &Node{
-		Children: make(map[rune]*Node),
-		IsEnd:    false,
-		Count:    0,
+		Children:  make(map[rune]*Node),
+		IsEnd:     false,
+		Count:     0,
+		WordCount: 0,
 	}
 }
 
 var newNode = NewTrie
 
 // Parse removes formatting and special characters before adding words to trie
-func (current *Node) Parse(text string) int {
+func (root *Node) Parse(text string) {
 	words := strings.Split(replacer.Replace(text), " ")
 
 	for _, word := range words {
-		current.Add(strings.ToLower(word))
+		root.Add(strings.ToLower(word))
 	}
-	return len(words)
+	root.WordCount = len(words)
 }
 
 // Add adds single exact words
@@ -78,10 +81,24 @@ func (current *Node) Search(word string) int {
 	// return current.isEnd
 }
 
-func (root *Node) Length() int {
+type Stats struct {
+	Words   int
+	Letters int
+	Memory  int
+}
+
+func (root *Node) Stats() {
+	letters := len(root.Children)
+	for _, node := range root.Children {
+		letters += len(node.Children)
+	}
 	data, err := json.Marshal(root)
 	if err != nil {
 		panic(err)
 	}
-	return len(data)
+
+	fmt.Printf(("Memory: %d bytes\n"), len(data))
+	fmt.Printf(("%d letters\n"), letters)
+	fmt.Printf(("%d words\n"), root.WordCount)
+
 }

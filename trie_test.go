@@ -1,7 +1,6 @@
 package trie
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -10,8 +9,8 @@ var sentence = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphin
 func TestTrieKoran(t *testing.T) {
 	trie := NewTrie()
 
-	stats := trie.Parse(thekoran)
-	fmt.Printf("Stats: %d words\n", stats)
+	trie.Parse(thekoran)
+	trie.Stats()
 	testWords := []string{
 		"fox",
 		"Muhammad",
@@ -45,8 +44,8 @@ func TestTrieKoran(t *testing.T) {
 func TestTrieEdda(t *testing.T) {
 	trie := NewTrie()
 
-	stats := trie.Parse(voluspa)
-	fmt.Printf("Stats: %d words\n", stats)
+	trie.Parse(voluspa)
+	trie.Stats()
 	testWords := []string{
 		"Vindálfr",
 		"Gandálfr",
@@ -66,21 +65,21 @@ func BenchmarkMuchAdo(b *testing.B) {
 	trie := NewTrie()
 	// for range b.N {
 	trie.Parse(muchado)
-	fmt.Printf("Size: %d bytes\n", trie.Length())
+	trie.Stats()
 	// }
 }
 func BenchmarkKoran(b *testing.B) {
 	trie := NewTrie()
 	// for range b.N {
 	trie.Parse(thekoran)
-	fmt.Printf("Size: %d bytes\n", trie.Length())
+	trie.Stats()
 	// }
 }
 func BenchmarkEdda(b *testing.B) {
 	trie := NewTrie()
 	// for range b.N {
 	trie.Parse(voluspa)
-	fmt.Printf("Size: %d bytes\n", trie.Length())
+	trie.Stats()
 	// }
 }
 
@@ -89,7 +88,7 @@ func TestTrieSize(t *testing.T) {
 	// for range b.N {
 	trie.Parse(muchado)
 
-	fmt.Printf("Size: %d bytes\n", trie.Length())
+	trie.Stats()
 
 }
 
