@@ -105,5 +105,15 @@ ok um moldþinur mátkan dœma, ok á Fimbultýs fornar rúnar.
 ‘Þar munu eptir undrsamligar gullnar tǫflur í grasi finnask, þærs í árdaga áttar hǫfðu.
 ‘Munu ósánir akrar vaxa,
 bǫls mun alls batna; Baldr mun koma; búa þeir Hǫðr ok Baldr Hropts sigtóptir, vel, valtívar. Vituð ér enn, eða hvat?
+
+‘Þá kná Hœnir hlautvið kjósa,
+ok burir byggja brœðra tveggja vindheim víðan. Vituð ér enn, eða hvat?
+‘Sal sér hon standa, sólu fegra,
+ulli þakðan, þar skulu dyggvar ok um aldrdaga
+‘Þar kømr inn dimmi
+naðr fránn, neðan frá Niðafjǫllum;
+berr sér í fjǫðrum — flýgr vǫll yfir — Niðhǫggr, nái. Nú mun hon søkkvask.’
+á Gimlé; dróttir byggja ynðis njóta.
+dreki fljúgandi
 	`
 )

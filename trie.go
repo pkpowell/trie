@@ -9,6 +9,7 @@ type Node struct {
 	Children map[rune]*Node `json:"children"`
 	IsEnd    bool           `json:"isEnd"`
 	Count    int            `json:"count"`
+	Tags     []string       `json:"tags"`
 }
 
 // NewTrie initializes a new Trie

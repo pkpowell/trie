@@ -50,8 +50,11 @@ func TestTrieEdda(t *testing.T) {
 	testWords := []string{
 		"Vindálfr",
 		"Gandálfr",
+		"Gandálf",
 		"dverga",
 		"kømr",
+		"annarr",
+		"vindheim",
 	}
 
 	for _, word := range testWords {
