@@ -5,7 +5,9 @@ import (
 	"testing"
 )
 
-func TestTrieSentence(t *testing.T) {
+var sentence = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
+
+func TestTrieKoran(t *testing.T) {
 	trie := NewTrie()
 
 	stats := trie.Parse(thekoran)
@@ -40,6 +42,22 @@ func TestTrieSentence(t *testing.T) {
 		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
 	}
 }
+func TestTrieEdda(t *testing.T) {
+	trie := NewTrie()
+
+	stats := trie.Parse(voluspa)
+	fmt.Printf("Stats: %d words\n", stats)
+	testWords := []string{
+		"Vindálfr",
+		"Gandálfr",
+		"dverga",
+		"kømr",
+	}
+
+	for _, word := range testWords {
+		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
+	}
+}
 
 func BenchmarkMuchAdo(b *testing.B) {
 	trie := NewTrie()
@@ -52,6 +70,13 @@ func BenchmarkKoran(b *testing.B) {
 	trie := NewTrie()
 	// for range b.N {
 	trie.Parse(thekoran)
+	fmt.Printf("Size: %d bytes\n", trie.Length())
+	// }
+}
+func BenchmarkEdda(b *testing.B) {
+	trie := NewTrie()
+	// for range b.N {
+	trie.Parse(voluspa)
 	fmt.Printf("Size: %d bytes\n", trie.Length())
 	// }
 }
