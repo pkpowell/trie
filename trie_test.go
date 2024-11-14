@@ -43,7 +43,7 @@ func TestTrieKoran(t *testing.T) {
 	}
 
 	for _, word := range testWords {
-		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
+		t.Logf("Found %d words containing %s ", len(trie.Search(word)), word)
 	}
 }
 func TestTrieMuchAdo(t *testing.T) {
@@ -159,7 +159,7 @@ func TestTrieEmptyString(t *testing.T) {
 	trie := NewTrie()
 
 	// Test empty string insertion
-	trie.Add("")
+	trie.Parse("")
 	// if !trie.Search("") {
 	// 	t.Error("Expected to find empty string in trie")
 	// }
@@ -173,14 +173,14 @@ func TestTrieOverlappingWords(t *testing.T) {
 
 	words := []string{"a", "ab", "abc", "abcd"}
 	for _, word := range words {
-		trie.Add(word)
+		trie.Parse(word)
 	}
 
 	for _, word := range words {
-		if trie.Search(word) == 0 {
+		if len(trie.Search(word)) == 0 {
 			t.Errorf("Expected to find '%s' in trie", word)
 		}
-		if trie.Search(word) == 0 {
+		if len(trie.Search(word)) == 0 {
 			t.Errorf("Expected '%s' substring", word)
 		}
 	}
@@ -191,7 +191,7 @@ func TestTrieSpecialCharacters(t *testing.T) {
 
 	specialWords := []string{"hello!", "hello?", "hello-world", "hello_world"}
 	for _, word := range specialWords {
-		trie.Add(word)
+		trie.Parse(word)
 		// if !trie.Search(word) {
 		// 	t.Errorf("Expected to find '%s' in trie", word)
 		// }

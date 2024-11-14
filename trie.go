@@ -22,8 +22,8 @@ type Node struct {
 	Children  map[rune]*Node `json:"children"`
 	IsEnd     bool           `json:"isEnd"`
 	Count     int            `json:"count"`
-	Tags      []string       `json:"tags"`
 	WordCount int            `json:"wordCount"`
+	Line      []int          `json:"line"`
 }
 
 // NewTrie initializes a new Trie
@@ -39,6 +39,7 @@ func NewTrie() *Node {
 		IsEnd:     false,
 		Count:     0,
 		WordCount: 0,
+		Line:      []int{},
 	}
 }
 
@@ -53,45 +54,62 @@ var t transform.Transformer
 
 // Parse removes formatting and special characters before adding words to trie
 func (root *Node) Parse(text string) {
-	words := strings.Split(replacer.Replace(text), " ")
-	for _, word := range words {
+	lines := strings.Split(text, "\n")
+	for num, line := range lines {
+		words := strings.Split(replacer.Replace(line), " ")
+		for _, word := range words {
 
-		word, _, err := transform.String(t, word)
-		if err != nil {
-			panic(err)
+			word, _, err := transform.String(t, word)
+			if err != nil {
+				panic(err)
+			}
+			for i := range len(word) {
+				root.update(word[i:], num)
+			}
+			// root.Add(word, num)
+
 		}
-		root.Add(word)
-
+		root.WordCount += len(words)
 	}
-	root.WordCount = len(words)
+	// words := strings.Split(replacer.Replace(text), " ")
+	// for _, word := range words {
+
+	// 	word, _, err := transform.String(t, word)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	root.Add(word, num)
+
+	// }
+	// root.WordCount = len(words)
 }
 
 // Add adds single exact words
-func (root *Node) Add(word string) {
-	length := len(word)
-	if length < 2 {
-		return
-	}
+// func (root *Node) Add(word string, num int) {
+// 	length := len(word)
+// 	if length < 2 {
+// 		return
+// 	}
 
-	// var limit = length // -2
+// 	// var limit = length // -2
 
-	if Opts.IgnoreDiacritics {
-		word, _, err := transform.String(t, word)
-		if err != nil {
-			panic(err)
-		}
-		// fmt.Println(word)
-		// root.update(word)
-		for i := range len(word) {
-			root.update(word[i:])
-		}
-	} else {
-		for i := range len(word) {
-			root.update(word[i:])
-		}
-	}
-}
-func (root *Node) update(word string) {
+//		// if Opts.IgnoreDiacritics {
+//		// 	word, _, err := transform.String(t, word)
+//		// 	if err != nil {
+//		// 		panic(err)
+//		// 	}
+//		// 	// fmt.Println(word)
+//		// 	// root.update(word)
+//		for i := range len(word) {
+//			root.update(word[i:], num)
+//		}
+//		// } else {
+//		// 	for i := range len(word) {
+//		// 		root.update(word[i:])
+//		// 	}
+//		// }
+//	}
+func (root *Node) update(word string, num int) {
 	current := root
 
 	for _, letter := range word {
@@ -101,12 +119,13 @@ func (root *Node) update(word string) {
 		}
 		current = current.Children[letter]
 		current.Count++
+		current.Line = append(current.Line, num)
 	}
 	current.IsEnd = true
 }
 
 // search for exact word
-func (root *Node) Search(word string) int {
+func (root *Node) Search(word string) []int {
 	var letter rune
 	var ok bool
 	var err error
@@ -125,11 +144,12 @@ func (root *Node) Search(word string) int {
 	for _, letter = range word {
 		_, ok = node.Children[letter]
 		if !ok {
-			return 0
+			return []int{}
 		}
 		node = node.Children[letter]
 	}
-	return node.Count
+	fmt.Println(node.Line)
+	return node.Line
 	// return current.isEnd
 }
 
