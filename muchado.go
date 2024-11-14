@@ -1,7 +1,8 @@
 package trie
 
 var (
-	muchado = `ACT I
+	muchado = `
+ACT I
 SCENE I. Before LEONATO'S house.
 Enter LEONATO, HERO, and BEATRICE, with a Messenger
 LEONATO

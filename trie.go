@@ -110,37 +110,31 @@ func (root *Node) update(word string, num int) {
 		}
 		current = current.Children[letter]
 		current.Count++
-		current.Lines[num]++
+		current.Lines[num+1]++
 	}
 	current.IsEnd = true
 }
 
 // search for exact word
-func (root *Node) Search(word string) Lines {
+func (root *Node) Search(word string) (total int, lines Lines) {
 	var letter rune
 	var ok bool
 	var err error
-	var node *Node
+	var node = root
 
-	// word = strings.ToLower(word)
-	// if Opts.IgnoreDiacritics {
 	word, _, err = transform.String(t, word)
 	if err != nil {
 		panic(err)
 	}
-	// }
-
-	node = root
 
 	for _, letter = range word {
 		_, ok = node.Children[letter]
 		if !ok {
-			return nil
+			return 0, nil
 		}
 		node = node.Children[letter]
 	}
-	// fmt.Println(node.Line)
-	return node.Lines
+	return node.Count, node.Lines
 	// return current.isEnd
 }
 
