@@ -1,6 +1,8 @@
 package trie
 
 import (
+	"fmt"
+	"slices"
 	"strings"
 	"testing"
 	"unicode"
@@ -43,9 +45,46 @@ func TestTrieKoran(t *testing.T) {
 	}
 
 	for _, word := range testWords {
-		t.Logf("Found %d words containing %s ", len(trie.Search(word)), word)
+		ln := trie.Search(word)
+		t.Logf("Found %d words containing %s ", len(ln), word)
+		t.Logf("at line %s", printLineNumbers(ln))
 	}
 }
+
+func printLineNumbers(lineNumbers Lines) (ln string) {
+	tail := ""
+	limit := 5
+	keys := make([]int, len(lineNumbers))
+	i := 0
+	for k := range lineNumbers {
+		keys[i] = k
+		i++
+	}
+	slices.Sort(keys)
+	if len(keys) >= limit {
+		keys = keys[:min(len(keys), limit)]
+		tail = "..."
+	}
+	var lns []string
+	for _, i := range keys {
+		if lineNumbers[i] > 1 {
+			lns = append(lns, fmt.Sprintf("%d (%d)", i, lineNumbers[i]))
+		} else {
+			lns = append(lns, fmt.Sprintf("%d", i))
+		}
+	}
+
+	return strings.Join(lns, ", ") + tail
+}
+
+func min(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+
+}
+
 func TestTrieMuchAdo(t *testing.T) {
 	trie := NewTrie()
 
@@ -73,7 +112,9 @@ func TestTrieMuchAdo(t *testing.T) {
 	}
 
 	for _, word := range testWords {
-		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
+		ln := trie.Search(word)
+		t.Logf("Found %d words containing %s ", len(ln), word)
+		t.Logf("at line %s", printLineNumbers(ln))
 	}
 }
 func TestTrieEdda(t *testing.T) {
@@ -93,7 +134,9 @@ func TestTrieEdda(t *testing.T) {
 	}
 
 	for _, word := range testWords {
-		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
+		ln := trie.Search(word)
+		t.Logf("Found %d words containing %s ", len(ln), word)
+		t.Logf("at line %s", printLineNumbers(ln))
 	}
 }
 

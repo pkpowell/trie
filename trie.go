@@ -17,13 +17,15 @@ type Options struct {
 	// CaseSensitive    bool
 	IgnoreDiacritics bool
 }
+type Lines map[int]int
 
 type Node struct {
 	Children  map[rune]*Node `json:"children"`
 	IsEnd     bool           `json:"isEnd"`
 	Count     int            `json:"count"`
 	WordCount int            `json:"wordCount"`
-	Line      []int          `json:"line"`
+	Lines     Lines          `json:"line"`
+	// Line      []int          `json:"line"`
 }
 
 // NewTrie initializes a new Trie
@@ -39,7 +41,7 @@ func NewTrie() *Node {
 		IsEnd:     false,
 		Count:     0,
 		WordCount: 0,
-		Line:      []int{},
+		Lines:     make(Lines),
 	}
 }
 
@@ -63,25 +65,14 @@ func (root *Node) Parse(text string) {
 			if err != nil {
 				panic(err)
 			}
+
 			for i := range len(word) {
 				root.update(word[i:], num)
 			}
-			// root.Add(word, num)
 
 		}
 		root.WordCount += len(words)
 	}
-	// words := strings.Split(replacer.Replace(text), " ")
-	// for _, word := range words {
-
-	// 	word, _, err := transform.String(t, word)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	root.Add(word, num)
-
-	// }
-	// root.WordCount = len(words)
 }
 
 // Add adds single exact words
@@ -119,37 +110,37 @@ func (root *Node) update(word string, num int) {
 		}
 		current = current.Children[letter]
 		current.Count++
-		current.Line = append(current.Line, num)
+		current.Lines[num]++
 	}
 	current.IsEnd = true
 }
 
 // search for exact word
-func (root *Node) Search(word string) []int {
+func (root *Node) Search(word string) Lines {
 	var letter rune
 	var ok bool
 	var err error
+	var node *Node
 
-	word = strings.ToLower(word)
-	if Opts.IgnoreDiacritics {
-		word, _, err = transform.String(t, word)
-		if err != nil {
-			panic(err)
-		}
+	// word = strings.ToLower(word)
+	// if Opts.IgnoreDiacritics {
+	word, _, err = transform.String(t, word)
+	if err != nil {
+		panic(err)
 	}
-	// word, _, err = transform.String(t, word)
-	// norm.NFC.Transform(word, true)
-	node := root
+	// }
+
+	node = root
 
 	for _, letter = range word {
 		_, ok = node.Children[letter]
 		if !ok {
-			return []int{}
+			return nil
 		}
 		node = node.Children[letter]
 	}
-	fmt.Println(node.Line)
-	return node.Line
+	// fmt.Println(node.Line)
+	return node.Lines
 	// return current.isEnd
 }
 
