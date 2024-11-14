@@ -67,7 +67,7 @@ func printLineNumbers(lineNumbers Lines) (ln string) {
 	slices.Sort(keys)
 	if len(keys) >= limit {
 		keys = keys[:min(len(keys), limit)]
-		tail = "..."
+		// tail = "..."
 	}
 
 	var lns []string
@@ -90,6 +90,29 @@ func min(a int, b int) int {
 	return b
 }
 
+func TestTrieJabberwock(t *testing.T) {
+	testWords := []string{
+		"fox",
+		"twice",
+		"jabber",
+		"jub",
+		"sword",
+		"vorpal",
+		"brillig",
+		"sought",
+	}
+	trie := NewTrie()
+	trie.ParseFile("the-jabberwocky.txt")
+	trie.Stats()
+
+	for _, word := range testWords {
+		total, ln := trie.Search(word)
+		t.Logf("Found %d words containing %s ", total, word)
+		if len(ln) > 0 {
+			t.Logf("at line %s", printLineNumbers(ln))
+		}
+	}
+}
 func TestTrieElefantsChild(t *testing.T) {
 	testWords := []string{
 		"fox",
