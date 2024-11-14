@@ -6,6 +6,8 @@ import (
 	"strings"
 	"unicode"
 
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
@@ -26,6 +28,11 @@ type Node struct {
 
 // NewTrie initializes a new Trie
 func NewTrie() *Node {
+	if Opts.IgnoreDiacritics {
+		t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
+	} else {
+		t = transform.Chain(norm.NFD, cases.Lower(language.English))
+	}
 
 	return &Node{
 		Children:  make(map[rune]*Node),
@@ -42,13 +49,19 @@ var Defaults = &Options{
 
 var Opts = Defaults
 
-var t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+var t transform.Transformer
 
 // Parse removes formatting and special characters before adding words to trie
 func (root *Node) Parse(text string) {
-	words := strings.Split(replacer.Replace(strings.ToLower(text)), " ")
+	words := strings.Split(replacer.Replace(text), " ")
 	for _, word := range words {
-		root.Add(strings.ToLower(word))
+
+		word, _, err := transform.String(t, word)
+		if err != nil {
+			panic(err)
+		}
+		root.Add(word)
+
 	}
 	root.WordCount = len(words)
 }

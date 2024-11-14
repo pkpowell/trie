@@ -1,7 +1,15 @@
 package trie
 
 import (
+	"strings"
 	"testing"
+	"unicode"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 )
 
 // var sentence = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
@@ -50,7 +58,7 @@ func TestTrieMuchAdo(t *testing.T) {
 		"pedr",
 		"LEONATO",
 		"ONATO",
-		"LEON",
+		"leon",
 		"uncl",
 		"uncle",
 		"per",
@@ -76,7 +84,7 @@ func TestTrieEdda(t *testing.T) {
 	testWords := []string{
 		"Vindálfr",
 		"Gandálfr",
-		"Gandálf",
+		"gandálf",
 		"Gandalf",
 		"dverga",
 		"kømr",
@@ -188,4 +196,43 @@ func TestTrieSpecialCharacters(t *testing.T) {
 		// 	t.Errorf("Expected to find '%s' in trie", word)
 		// }
 	}
+}
+
+func BenchmarkToLower(b *testing.B) {
+	word := "BigWord"
+	for range b.N {
+		word = strings.ToLower(word)
+	}
+}
+func BenchmarkCaser(b *testing.B) {
+	t = transform.Chain(cases.Lower(language.English))
+	word := "BigWord"
+
+	for range b.N {
+		word, _, _ = transform.String(t, word)
+	}
+}
+func BenchmarkBoth1(b *testing.B) {
+	t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
+	word := "þá mun Friggjar falla Angantýr."
+
+	for range b.N {
+		word, _, _ = transform.String(t, strings.ToLower(word))
+	}
+}
+func BenchmarkBoth2(b *testing.B) {
+	t = transform.Chain(cases.Lower(language.English), norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
+	word := "þá mun Friggjar falla Angantýr."
+
+	for range b.N {
+		word, _, _ = transform.String(t, word)
+	}
+}
+func TestBoth2(t *testing.T) {
+	tr := transform.Chain(cases.Lower(language.English), norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	word := "‘Þá kømr inn mikli mǫgr Sigfǫður, Víðarr, vega at valdýri; öäü"
+	t.Log(word)
+
+	word, _, _ = transform.String(tr, word)
+	t.Log(word)
 }
