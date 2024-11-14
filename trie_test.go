@@ -194,6 +194,7 @@ func TestTrieFoxInSocks(t *testing.T) {
 		"knox",
 		"broom",
 		"puddle",
+		"noodle",
 	}
 	trie := NewTrie()
 	str := string(b) // convert content to a 'string'
