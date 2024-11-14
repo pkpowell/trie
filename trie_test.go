@@ -18,12 +18,39 @@ func TestTrieKoran(t *testing.T) {
 		"twice",
 		"unlce",
 		"pedr",
-		"LEONATO",
-		"ONATO",
-		"LEON",
 		"Fatima",
 		"Hafsa",
 		"Maryam",
+		"uncl",
+		"uncle",
+		"per",
+		"valiant",
+		"too",
+		"hello",
+		"help",
+		"hell",
+		"the",
+		"an",
+		"abcd",
+	}
+
+	for _, word := range testWords {
+		t.Logf("Found %d words containing %s in trie", trie.Search(word), word)
+	}
+}
+func TestTrieMuchAdo(t *testing.T) {
+	trie := NewTrie()
+
+	trie.Parse(muchado)
+	trie.Stats()
+	testWords := []string{
+		"fox",
+		"twice",
+		"unlce",
+		"pedr",
+		"LEONATO",
+		"ONATO",
+		"LEON",
 		"uncl",
 		"uncle",
 		"per",

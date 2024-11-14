@@ -12,7 +12,7 @@ import (
 )
 
 type Options struct {
-	CaseSensitive    bool
+	// CaseSensitive    bool
 	IgnoreDiacritics bool
 }
 
@@ -37,19 +37,15 @@ func NewTrie() *Node {
 
 var newNode = NewTrie
 var Defaults = &Options{
-	IgnoreDiacritics: false,
+	IgnoreDiacritics: true,
 }
 
 var Opts = Defaults
+
 var t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 
 // Parse removes formatting and special characters before adding words to trie
 func (root *Node) Parse(text string) {
-	// if opts != nil {
-	// 	Opts = opts
-	// }
-	// norm.NFC.Transform(text, true)
-	// words, _, _ := transform.String(t, text)
 	words := strings.Split(replacer.Replace(strings.ToLower(text)), " ")
 	for _, word := range words {
 		root.Add(strings.ToLower(word))
@@ -64,25 +60,36 @@ func (root *Node) Add(word string) {
 		return
 	}
 
-	var current *Node
-	var sub string
-	var letter rune
-	var ok bool
-	var limit = length // -2
+	// var limit = length // -2
 
-	for i := range limit {
-		sub = word[i:]
-		current = root
-		for _, letter = range sub {
-			_, ok = current.Children[letter]
-			if !ok {
-				current.Children[letter] = newNode()
-			}
-			current = current.Children[letter]
-			current.Count++
+	if Opts.IgnoreDiacritics {
+		word, _, err := transform.String(t, word)
+		if err != nil {
+			panic(err)
 		}
-		current.IsEnd = true
+		// fmt.Println(word)
+		// root.update(word)
+		for i := range len(word) {
+			root.update(word[i:])
+		}
+	} else {
+		for i := range len(word) {
+			root.update(word[i:])
+		}
 	}
+}
+func (root *Node) update(word string) {
+	current := root
+
+	for _, letter := range word {
+		_, ok := current.Children[letter]
+		if !ok {
+			current.Children[letter] = newNode()
+		}
+		current = current.Children[letter]
+		current.Count++
+	}
+	current.IsEnd = true
 }
 
 // search for exact word
@@ -92,10 +99,13 @@ func (root *Node) Search(word string) int {
 	var err error
 
 	word = strings.ToLower(word)
-	// word, _, err = transform.String(t, word)
-	if err != nil {
-		panic(err)
+	if Opts.IgnoreDiacritics {
+		word, _, err = transform.String(t, word)
+		if err != nil {
+			panic(err)
+		}
 	}
+	// word, _, err = transform.String(t, word)
 	// norm.NFC.Transform(word, true)
 	node := root
 
