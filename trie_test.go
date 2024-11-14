@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var sentence = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
+// var sentence = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
 
 func TestTrieKoran(t *testing.T) {
 	trie := NewTrie()
@@ -50,6 +50,7 @@ func TestTrieEdda(t *testing.T) {
 		"Vindálfr",
 		"Gandálfr",
 		"Gandálf",
+		"Gandalf",
 		"dverga",
 		"kømr",
 		"annarr",
