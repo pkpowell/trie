@@ -2,7 +2,6 @@ package trie
 
 import (
 	"fmt"
-	"os"
 	"slices"
 	"strings"
 	"testing"
@@ -92,11 +91,6 @@ func min(a int, b int) int {
 }
 
 func TestTrieElefantsChild(t *testing.T) {
-	b, err := os.ReadFile("the-elefants-child.txt") // just pass the file name
-	if err != nil {
-		panic(err)
-	}
-
 	testWords := []string{
 		"fox",
 		"twice",
@@ -106,8 +100,7 @@ func TestTrieElefantsChild(t *testing.T) {
 		"Beloved",
 	}
 	trie := NewTrie()
-	str := string(b) // convert content to a 'string'
-	trie.Parse(str)
+	trie.ParseFile("the-elefants-child.txt")
 	trie.Stats()
 
 	for _, word := range testWords {
@@ -181,11 +174,6 @@ func TestTrieEdda(t *testing.T) {
 	}
 }
 func TestTrieFoxInSocks(t *testing.T) {
-	b, err := os.ReadFile("fox-in-socks.txt") // just pass the file name
-	if err != nil {
-		panic(err)
-	}
-
 	testWords := []string{
 		"fox",
 		"bricks",
@@ -197,8 +185,8 @@ func TestTrieFoxInSocks(t *testing.T) {
 		"noodle",
 	}
 	trie := NewTrie()
-	str := string(b) // convert content to a 'string'
-	trie.Parse(str)
+
+	trie.ParseFile("fox-in-socks.txt")
 	trie.Stats()
 
 	for _, word := range testWords {

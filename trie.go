@@ -3,6 +3,7 @@ package trie
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"unicode"
 
@@ -53,6 +54,14 @@ var Defaults = &Options{
 var Opts = Defaults
 
 var t transform.Transformer
+
+func (root *Node) ParseFile(filename string) {
+	b, err := os.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	root.Parse(string(b))
+}
 
 // Parse removes formatting and special characters before adding words to trie
 func (root *Node) Parse(text string) {
