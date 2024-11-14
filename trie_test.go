@@ -65,6 +65,7 @@ func printLineNumbers(lineNumbers Lines) (ln string) {
 		keys = keys[:min(len(keys), limit)]
 		tail = "..."
 	}
+
 	var lns []string
 	for _, i := range keys {
 		if lineNumbers[i] > 1 {
@@ -81,8 +82,8 @@ func min(a int, b int) int {
 	if a < b {
 		return a
 	}
-	return b
 
+	return b
 }
 
 func TestTrieMuchAdo(t *testing.T) {
