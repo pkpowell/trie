@@ -17,9 +17,9 @@ import (
 // var sentence = "Sphinx of black quartz, judge my vow. Jackdaws love my big sphinx of quartz. Pack my box with five dozen liquor jugs. The quick onyx goblin jumps over the lazy dwarf. The quick brown fox jumps over the lazy dog."
 
 func TestTrieKoran(t *testing.T) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 
-	trie.Parse(thekoran)
+	trie.ParseText(thekoran)
 	trie.Stats()
 	testWords := []string{
 		"fox",
@@ -101,7 +101,7 @@ func TestTrieJabberwock(t *testing.T) {
 		"brillig",
 		"sought",
 	}
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 	trie.ParseFile("the-jabberwocky.txt")
 	trie.Stats()
 
@@ -122,7 +122,7 @@ func TestTrieElefantsChild(t *testing.T) {
 		"pedr",
 		"Beloved",
 	}
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 	trie.ParseFile("the-elefants-child.txt")
 	trie.Stats()
 
@@ -136,9 +136,9 @@ func TestTrieElefantsChild(t *testing.T) {
 }
 
 func TestTrieMuchAdo(t *testing.T) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 
-	trie.Parse(muchado)
+	trie.ParseText(muchado)
 	trie.Stats()
 	testWords := []string{
 		"fox",
@@ -173,9 +173,9 @@ func TestTrieMuchAdo(t *testing.T) {
 }
 
 func TestTrieEdda(t *testing.T) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: false})
 
-	trie.Parse(voluspa)
+	trie.ParseText(voluspa)
 	trie.Stats()
 	testWords := []string{
 		"Vindálfr",
@@ -207,7 +207,7 @@ func TestTrieFoxInSocks(t *testing.T) {
 		"puddle",
 		"noodle",
 	}
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 
 	trie.ParseFile("fox-in-socks.txt")
 	trie.Stats()
@@ -222,31 +222,31 @@ func TestTrieFoxInSocks(t *testing.T) {
 }
 
 func BenchmarkMuchAdo(b *testing.B) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
-	trie.Parse(muchado)
+	trie.ParseText(muchado)
 	trie.Stats()
 	// }
 }
 func BenchmarkKoran(b *testing.B) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
-	trie.Parse(thekoran)
+	trie.ParseText(thekoran)
 	trie.Stats()
 	// }
 }
 func BenchmarkEdda(b *testing.B) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: false})
 	// for range b.N {
-	trie.Parse(voluspa)
+	trie.ParseText(voluspa)
 	trie.Stats()
 	// }
 }
 
 func TestTrieSize(t *testing.T) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
-	trie.Parse(muchado)
+	trie.ParseText(muchado)
 
 	trie.Stats()
 
@@ -280,10 +280,10 @@ func TestTrieSize(t *testing.T) {
 // }
 
 func TestTrieEmptyString(t *testing.T) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 
 	// Test empty string insertion
-	trie.Parse("")
+	trie.ParseText("")
 	// if !trie.Search("") {
 	// 	t.Error("Expected to find empty string in trie")
 	// }
@@ -311,11 +311,11 @@ func TestTrieEmptyString(t *testing.T) {
 // }
 
 func TestTrieSpecialCharacters(t *testing.T) {
-	trie := NewTrie()
+	trie := New(&Options{IgnoreDiacritics: true})
 
 	specialWords := []string{"hello!", "hello?", "hello-world", "hello_world"}
 	for _, word := range specialWords {
-		trie.Parse(word)
+		trie.ParseText(word)
 		// if !trie.Search(word) {
 		// 	t.Errorf("Expected to find '%s' in trie", word)
 		// }

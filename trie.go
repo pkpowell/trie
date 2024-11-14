@@ -26,15 +26,18 @@ type Node struct {
 	Count     int            `json:"count"`
 	WordCount int            `json:"wordCount"`
 	Lines     Lines          `json:"line"`
+	options   *Options       `json:"-"`
 	// Line      []int          `json:"line"`
 }
 
-// NewTrie initializes a new Trie
-func NewTrie() *Node {
-	if Opts.IgnoreDiacritics {
+// New initializes a new Trie
+func New(opts *Options) *Node {
+
+	if opts.IgnoreDiacritics {
 		t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
 	} else {
 		t = transform.Chain(norm.NFD, cases.Lower(language.English))
+		opts = Defaults
 	}
 
 	return &Node{
@@ -43,10 +46,11 @@ func NewTrie() *Node {
 		Count:     0,
 		WordCount: 0,
 		Lines:     make(Lines),
+		options:   opts,
 	}
 }
 
-var newNode = NewTrie
+var newNode = New
 var Defaults = &Options{
 	IgnoreDiacritics: true,
 }
@@ -60,11 +64,11 @@ func (root *Node) ParseFile(filename string) {
 	if err != nil {
 		panic(err)
 	}
-	root.Parse(string(b))
+	root.ParseText(string(b))
 }
 
-// Parse removes formatting and special characters before adding words to trie
-func (root *Node) Parse(text string) {
+// ParseText removes formatting and special characters before adding words to trie
+func (root *Node) ParseText(text string) {
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
 		words := strings.Split(replacer.Replace(line), " ")
@@ -115,7 +119,7 @@ func (root *Node) update(word string, num int) {
 	for _, letter := range word {
 		_, ok := current.Children[letter]
 		if !ok {
-			current.Children[letter] = newNode()
+			current.Children[letter] = newNode(&Options{IgnoreDiacritics: root.options.IgnoreDiacritics})
 		}
 		current = current.Children[letter]
 		current.Count++
