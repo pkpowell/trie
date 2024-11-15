@@ -355,27 +355,27 @@ func BenchmarkToLower(b *testing.B) {
 	}
 }
 func BenchmarkCaser(b *testing.B) {
-	t = transform.Chain(cases.Lower(language.English))
+	transf = transform.Chain(cases.Lower(language.English))
 	word := "BigWord"
 
 	for range b.N {
-		word, _, _ = transform.String(t, word)
+		word, _, _ = transform.String(transf, word)
 	}
 }
 func BenchmarkBoth1(b *testing.B) {
-	t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
+	transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
 	word := "þá mun Friggjar falla Angantýr."
 
 	for range b.N {
-		word, _, _ = transform.String(t, strings.ToLower(word))
+		word, _, _ = transform.String(transf, strings.ToLower(word))
 	}
 }
 func BenchmarkBoth2(b *testing.B) {
-	t = transform.Chain(cases.Lower(language.English), norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
+	transf = transform.Chain(cases.Lower(language.English), norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
 	word := "þá mun Friggjar falla Angantýr."
 
 	for range b.N {
-		word, _, _ = transform.String(t, word)
+		word, _, _ = transform.String(transf, word)
 	}
 }
 func TestBoth2(t *testing.T) {

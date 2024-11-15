@@ -36,9 +36,9 @@ type Node struct {
 func New(opts *Options) *Node {
 
 	if opts.IgnoreDiacritics {
-		t = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
+		transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
 	} else {
-		t = transform.Chain(norm.NFD, cases.Lower(language.English))
+		transf = transform.Chain(norm.NFD, cases.Lower(language.English))
 		opts = Defaults
 	}
 
@@ -60,7 +60,7 @@ var Defaults = &Options{
 
 var Opts = Defaults
 
-var t transform.Transformer
+var transf transform.Transformer
 
 func (root *Node) ParseFile(filename string, replacer *strings.Replacer) {
 	b, err := os.ReadFile(filename)
@@ -94,9 +94,9 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 			}
 			// fmt.Println("word", word)
 
-			fmt.Printf("word len %d", len(word))
+			fmt.Printf("word len %d\n", len(word))
 
-			word, _, err := transform.String(t, word)
+			word, _, err := transform.String(transf, word)
 			if err != nil {
 				fmt.Println("transform error", err)
 				continue
@@ -167,7 +167,7 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 	root.mtx.RLock()
 	defer root.mtx.RUnlock()
 
-	word, _, err = transform.String(t, word)
+	word, _, err = transform.String(transf, word)
 	if err != nil {
 		panic(err)
 	}
