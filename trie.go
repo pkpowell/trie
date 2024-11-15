@@ -34,7 +34,6 @@ type Node struct {
 
 // New initializes a new Trie
 func New(opts *Options) *Node {
-
 	if opts.IgnoreDiacritics {
 		transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
 	} else {
@@ -96,7 +95,9 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 
 			fmt.Printf("word len %d\n", len(word))
 
-			word, _, err := transform.String(transf, word)
+			word := norm.NFC.String(norm.NFD.String(word)).
+
+			// word, _, err := transform.String(transf, word)
 			if err != nil {
 				fmt.Println("transform error", err)
 				continue
