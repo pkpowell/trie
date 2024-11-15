@@ -76,6 +76,9 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 		fmt.Printf("root is nil")
 		return
 	}
+	if len(text) < 2 {
+		return
+	}
 	if replacer == nil {
 		replacer = StandardReplacer
 	}
