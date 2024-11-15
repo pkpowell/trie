@@ -77,6 +77,10 @@ func (root *Node) ParseText(text string) {
 	for num, line := range lines {
 		words := strings.Split(replacer.Replace(line), " ")
 		for _, word := range words {
+			if len(word) == 0 {
+				continue
+			}
+
 			fmt.Printf("word len %d", len(word))
 
 			word, _, err := transform.String(t, word)
