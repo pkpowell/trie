@@ -92,7 +92,7 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 			if len(word) < 2 {
 				continue
 			}
-			fmt.Println("word", word)
+			// fmt.Println("word", word)
 
 			// fmt.Printf("word len %d", len(word))
 
@@ -196,7 +196,8 @@ func (root *Node) Stats() {
 	}
 	data, err := json.Marshal(root)
 	if err != nil {
-		panic(err)
+		fmt.Println("json.Marshal error", err)
+		return
 	}
 
 	fmt.Printf(("Memory: %d bytes\n"), len(data))
