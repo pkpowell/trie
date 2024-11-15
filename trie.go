@@ -198,10 +198,13 @@ type Stats struct {
 }
 
 func (root *Node) Stats() {
-	letters := len(root.Children)
-	for _, node := range root.Children {
-		letters += len(node.Children)
-	}
+	root.mtx.RLock()
+	defer root.mtx.RUnlock()
+
+	// letters := len(root.Children)
+	// for _, node := range root.Children {
+	// 	letters += len(node.Children)
+	// }
 	data, err := json.Marshal(root)
 	if err != nil {
 		fmt.Println("json.Marshal error", err)
@@ -209,7 +212,7 @@ func (root *Node) Stats() {
 	}
 
 	fmt.Printf(("Memory: %d bytes\n"), len(data))
-	fmt.Printf(("%d letters\n"), letters)
+	// fmt.Printf(("%d letters\n"), letters)
 	fmt.Printf(("%d words\n"), root.WordCount)
 
 }
