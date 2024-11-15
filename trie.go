@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"unicode"
 
 	"golang.org/x/text/cases"
@@ -28,7 +29,7 @@ type Node struct {
 	WordCount int            `json:"wordCount"`
 	Lines     Lines          `json:"line"`
 	options   *Options       `json:"-"`
-	// Line      []int          `json:"line"`
+	mtx       *sync.RWMutex  `json:"-"`
 }
 
 // New initializes a new Trie
@@ -77,6 +78,8 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 	if replacer == nil {
 		replacer = StandardReplacer
 	}
+	root.mtx.Lock()
+	defer root.mtx.Unlock()
 
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
@@ -153,6 +156,9 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 	var ok bool
 	var err error
 	var node = root
+
+	root.mtx.RLock()
+	defer root.mtx.RUnlock()
 
 	word, _, err = transform.String(t, word)
 	if err != nil {
