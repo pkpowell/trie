@@ -20,7 +20,7 @@ func TestTrieKoran(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 
 	trie.ParseText(thekoran, StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 	testWords := []string{
 		"fox",
 		"Muhammad",
@@ -103,7 +103,7 @@ func TestTrieJabberwock(t *testing.T) {
 	}
 	trie := New(&Options{IgnoreDiacritics: true})
 	trie.ParseFile("the-jabberwocky.txt", StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 
 	for _, word := range testWords {
 		total, ln := trie.Search(word)
@@ -124,7 +124,7 @@ func TestTrieElefantsChild(t *testing.T) {
 	}
 	trie := New(&Options{IgnoreDiacritics: true})
 	trie.ParseFile("the-elefants-child.txt", StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 
 	for _, word := range testWords {
 		total, ln := trie.Search(word)
@@ -139,7 +139,7 @@ func TestTrieMuchAdo(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 
 	trie.ParseText(muchado, StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 	testWords := []string{
 		"fox",
 		"twice",
@@ -176,7 +176,7 @@ func TestTrieEdda(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: false})
 
 	trie.ParseText(voluspa, StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 	testWords := []string{
 		"Vindálfr",
 		"Gandálfr",
@@ -210,7 +210,7 @@ func TestTrieFoxInSocks(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 
 	trie.ParseFile("fox-in-socks.txt", StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 
 	for _, word := range testWords {
 		total, ln := trie.Search(word)
@@ -235,7 +235,7 @@ func TestTrieUUIDs(t *testing.T) {
 
 	trie.ParseText("37bf6ca3-cd28-59d4-bf69-80f51e22f407", TechnicalReplacer)
 	trie.ParseText("0bcfa996-4f5e-534c-b6d3-9e5cd001032f", TechnicalReplacer)
-	trie.Stats()
+	// trie.Stats()
 
 	for _, word := range testWords {
 		total, ln := trie.Search(word)
@@ -251,21 +251,21 @@ func BenchmarkMuchAdo(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
 	trie.ParseText(muchado, StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 	// }
 }
 func BenchmarkKoran(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
 	trie.ParseText(thekoran, StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 	// }
 }
 func BenchmarkEdda(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: false})
 	// for range b.N {
 	trie.ParseText(voluspa, StandardReplacer)
-	trie.Stats()
+	// trie.Stats()
 	// }
 }
 
@@ -274,7 +274,7 @@ func TestTrieSize(t *testing.T) {
 	// for range b.N {
 	trie.ParseText(muchado, StandardReplacer)
 
-	trie.Stats()
+	// trie.Stats()
 
 }
 

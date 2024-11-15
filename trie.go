@@ -32,12 +32,19 @@ type Node struct {
 	mtx       *sync.RWMutex    `json:"-"`
 }
 
+var trans func(word string) string
+
 // New initializes a new Trie
 func New(opts *Options) *Node {
 	if opts.IgnoreDiacritics {
-		transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
+		trans = func(word string) string {
+			return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
+		}
+		// transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
 	} else {
-		transf = transform.Chain(norm.NFD, cases.Lower(language.English))
+		trans = func(word string) string {
+			return norm.NFD.String(cases.Lower(language.English).String(word))
+		}
 		opts = Defaults
 	}
 
@@ -93,9 +100,9 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 			}
 			// fmt.Println("word", word)
 
-			fmt.Printf("word len %d\n", len(word))
+			// fmt.Printf("word len %d\n", len(word))
 
-			word := norm.NFC.String(norm.NFD.String(word))
+			word := norm.NFC.String(trans(word))
 
 			// word, _, err := transform.String(transf, word)
 			// if err != nil {
