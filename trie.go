@@ -79,8 +79,8 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 	if replacer == nil {
 		replacer = StandardReplacer
 	}
-	root.mtx.Lock()
-	defer root.mtx.Unlock()
+	// root.mtx.Lock()
+	// defer root.mtx.Unlock()
 
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
