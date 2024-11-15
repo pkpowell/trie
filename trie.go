@@ -23,13 +23,13 @@ type Options struct {
 type Lines map[int]int
 
 type Node struct {
-	Children  map[rune]*Node `json:"children"`
-	IsEnd     bool           `json:"isEnd"`
-	Count     int            `json:"count"`
-	WordCount int            `json:"wordCount"`
-	Lines     Lines          `json:"line"`
-	options   *Options       `json:"-"`
-	mtx       *sync.RWMutex  `json:"-"`
+	Children  map[string]*Node `json:"children"`
+	IsEnd     bool             `json:"isEnd"`
+	Count     int              `json:"count"`
+	WordCount int              `json:"wordCount"`
+	Lines     Lines            `json:"line"`
+	options   *Options         `json:"-"`
+	mtx       *sync.RWMutex    `json:"-"`
 }
 
 // New initializes a new Trie
@@ -42,7 +42,7 @@ func New(opts *Options) *Node {
 	}
 
 	return &Node{
-		Children:  make(map[rune]*Node),
+		Children:  make(map[string]*Node),
 		IsEnd:     false,
 		Count:     0,
 		WordCount: 0,
@@ -95,13 +95,13 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 
 			fmt.Printf("word len %d\n", len(word))
 
-			word := norm.NFC.String(norm.NFD.String(word)).
+			word := norm.NFC.String(norm.NFD.String(word))
 
 			// word, _, err := transform.String(transf, word)
-			if err != nil {
-				fmt.Println("transform error", err)
-				continue
-			}
+			// if err != nil {
+			// 	fmt.Println("transform error", err)
+			// 	continue
+			// }
 
 			for i := range len(word) {
 				root.update(word[i:], num)
@@ -147,11 +147,11 @@ func (root *Node) update(word string, num int) {
 	current := root
 
 	for _, letter := range word {
-		_, ok := current.Children[letter]
+		_, ok := current.Children[string(letter)]
 		if !ok {
-			current.Children[letter] = newNode(&Options{IgnoreDiacritics: root.options.IgnoreDiacritics})
+			current.Children[string(letter)] = newNode(&Options{IgnoreDiacritics: root.options.IgnoreDiacritics})
 		}
-		current = current.Children[letter]
+		current = current.Children[string(letter)]
 		current.Count++
 		current.Lines[num+1]++
 	}
@@ -174,11 +174,11 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 	}
 
 	for _, letter = range word {
-		_, ok = node.Children[letter]
+		_, ok = node.Children[string(letter)]
 		if !ok {
 			return 0, nil
 		}
-		node = node.Children[letter]
+		node = node.Children[string(letter)]
 	}
 	return node.Count, node.Lines
 	// return current.isEnd
