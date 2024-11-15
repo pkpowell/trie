@@ -220,6 +220,31 @@ func TestTrieFoxInSocks(t *testing.T) {
 		}
 	}
 }
+func TestTrieUUIDs(t *testing.T) {
+	testWords := []string{
+		"37bf6ca3-cd28-59d4-bf69-80f51e22f407",
+		"0bcfa996-4f5e-534c-b6d3",
+		"beetle",
+		"socks",
+		"knox",
+		"broom",
+		"puddle",
+		"noodle",
+	}
+	trie := New(&Options{IgnoreDiacritics: true})
+
+	trie.ParseText("37bf6ca3-cd28-59d4-bf69-80f51e22f407")
+	trie.ParseText("0bcfa996-4f5e-534c-b6d3-9e5cd001032f")
+	trie.Stats()
+
+	for _, word := range testWords {
+		total, ln := trie.Search(word)
+		t.Logf("Found %d words containing %s ", total, word)
+		if len(ln) > 0 {
+			t.Logf("at line %s", printLineNumbers(ln))
+		}
+	}
+}
 
 func BenchmarkMuchAdo(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: true})

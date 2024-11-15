@@ -69,14 +69,20 @@ func (root *Node) ParseFile(filename string) {
 
 // ParseText removes formatting and special characters before adding words to trie
 func (root *Node) ParseText(text string) {
+	if root == nil {
+		fmt.Printf("root is nil")
+		return
+	}
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
 		words := strings.Split(replacer.Replace(line), " ")
 		for _, word := range words {
+			fmt.Printf("word len %d", len(word))
 
 			word, _, err := transform.String(t, word)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				continue
 			}
 
 			for i := range len(word) {
@@ -113,6 +119,9 @@ func (root *Node) ParseText(text string) {
 //		// 	}
 //		// }
 //	}
+//
+
+// Update updates a word in the trie
 func (root *Node) update(word string, num int) {
 	current := root
 
