@@ -19,7 +19,7 @@ import (
 func TestTrieKoran(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 
-	trie.ParseText(thekoran)
+	trie.ParseText(thekoran, StandardReplacer)
 	trie.Stats()
 	testWords := []string{
 		"fox",
@@ -102,7 +102,7 @@ func TestTrieJabberwock(t *testing.T) {
 		"sought",
 	}
 	trie := New(&Options{IgnoreDiacritics: true})
-	trie.ParseFile("the-jabberwocky.txt")
+	trie.ParseFile("the-jabberwocky.txt", StandardReplacer)
 	trie.Stats()
 
 	for _, word := range testWords {
@@ -123,7 +123,7 @@ func TestTrieElefantsChild(t *testing.T) {
 		"Beloved",
 	}
 	trie := New(&Options{IgnoreDiacritics: true})
-	trie.ParseFile("the-elefants-child.txt")
+	trie.ParseFile("the-elefants-child.txt", StandardReplacer)
 	trie.Stats()
 
 	for _, word := range testWords {
@@ -138,7 +138,7 @@ func TestTrieElefantsChild(t *testing.T) {
 func TestTrieMuchAdo(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 
-	trie.ParseText(muchado)
+	trie.ParseText(muchado, StandardReplacer)
 	trie.Stats()
 	testWords := []string{
 		"fox",
@@ -175,7 +175,7 @@ func TestTrieMuchAdo(t *testing.T) {
 func TestTrieEdda(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: false})
 
-	trie.ParseText(voluspa)
+	trie.ParseText(voluspa, StandardReplacer)
 	trie.Stats()
 	testWords := []string{
 		"Vindálfr",
@@ -209,7 +209,7 @@ func TestTrieFoxInSocks(t *testing.T) {
 	}
 	trie := New(&Options{IgnoreDiacritics: true})
 
-	trie.ParseFile("fox-in-socks.txt")
+	trie.ParseFile("fox-in-socks.txt", StandardReplacer)
 	trie.Stats()
 
 	for _, word := range testWords {
@@ -224,7 +224,7 @@ func TestTrieUUIDs(t *testing.T) {
 	testWords := []string{
 		"37bf6ca3-cd28-59d4-bf69-80f51e22f407",
 		"0bcfa996-4f5e-534c-b6d3",
-		"beetle",
+		"37bf6ca3",
 		"socks",
 		"knox",
 		"broom",
@@ -233,15 +233,16 @@ func TestTrieUUIDs(t *testing.T) {
 	}
 	trie := New(&Options{IgnoreDiacritics: true})
 
-	trie.ParseText("37bf6ca3-cd28-59d4-bf69-80f51e22f407")
-	trie.ParseText("0bcfa996-4f5e-534c-b6d3-9e5cd001032f")
+	trie.ParseText("37bf6ca3-cd28-59d4-bf69-80f51e22f407", TechnicalReplacer)
+	trie.ParseText("0bcfa996-4f5e-534c-b6d3-9e5cd001032f", TechnicalReplacer)
 	trie.Stats()
 
 	for _, word := range testWords {
 		total, ln := trie.Search(word)
-		t.Logf("Found %d words containing %s ", total, word)
 		if len(ln) > 0 {
-			t.Logf("at line %s", printLineNumbers(ln))
+			t.Logf("Found %d words containing %s at line %s", total, word, printLineNumbers(ln))
+		} else {
+			t.Logf("Found no words containing %s ", word)
 		}
 	}
 }
@@ -249,21 +250,21 @@ func TestTrieUUIDs(t *testing.T) {
 func BenchmarkMuchAdo(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
-	trie.ParseText(muchado)
+	trie.ParseText(muchado, StandardReplacer)
 	trie.Stats()
 	// }
 }
 func BenchmarkKoran(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
-	trie.ParseText(thekoran)
+	trie.ParseText(thekoran, StandardReplacer)
 	trie.Stats()
 	// }
 }
 func BenchmarkEdda(b *testing.B) {
 	trie := New(&Options{IgnoreDiacritics: false})
 	// for range b.N {
-	trie.ParseText(voluspa)
+	trie.ParseText(voluspa, StandardReplacer)
 	trie.Stats()
 	// }
 }
@@ -271,7 +272,7 @@ func BenchmarkEdda(b *testing.B) {
 func TestTrieSize(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 	// for range b.N {
-	trie.ParseText(muchado)
+	trie.ParseText(muchado, StandardReplacer)
 
 	trie.Stats()
 
@@ -308,7 +309,7 @@ func TestTrieEmptyString(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: true})
 
 	// Test empty string insertion
-	trie.ParseText("")
+	trie.ParseText("", TechnicalReplacer)
 	// if !trie.Search("") {
 	// 	t.Error("Expected to find empty string in trie")
 	// }
@@ -340,7 +341,7 @@ func TestTrieSpecialCharacters(t *testing.T) {
 
 	specialWords := []string{"hello!", "hello?", "hello-world", "hello_world"}
 	for _, word := range specialWords {
-		trie.ParseText(word)
+		trie.ParseText(word, TechnicalReplacer)
 		// if !trie.Search(word) {
 		// 	t.Errorf("Expected to find '%s' in trie", word)
 		// }

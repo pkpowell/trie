@@ -17,6 +17,7 @@ import (
 type Options struct {
 	// CaseSensitive    bool
 	IgnoreDiacritics bool
+	Replacer         *strings.Replacer
 }
 type Lines map[int]int
 
@@ -59,24 +60,29 @@ var Opts = Defaults
 
 var t transform.Transformer
 
-func (root *Node) ParseFile(filename string) {
+func (root *Node) ParseFile(filename string, replacer *strings.Replacer) {
 	b, err := os.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}
-	root.ParseText(string(b))
+	root.ParseText(string(b), replacer)
 }
 
 // ParseText removes formatting and special characters before adding words to trie
-func (root *Node) ParseText(text string) {
+func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 	if root == nil {
 		fmt.Printf("root is nil")
 		return
 	}
+	if replacer == nil {
+		replacer = StandardReplacer
+	}
+
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
 		words := strings.Split(replacer.Replace(line), " ")
 		for _, word := range words {
+			fmt.Println("word", word)
 			if len(word) == 0 {
 				continue
 			}
