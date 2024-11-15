@@ -137,6 +137,9 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 
 // Update updates a word in the trie
 func (root *Node) update(word string, num int) {
+	root.mtx.Lock()
+	defer root.mtx.Unlock()
+
 	current := root
 
 	for _, letter := range word {
