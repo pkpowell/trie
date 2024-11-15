@@ -86,10 +86,10 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 	for num, line := range lines {
 		words := strings.Split(replacer.Replace(line), " ")
 		for _, word := range words {
-			fmt.Println("word", word)
-			if len(word) == 0 {
+			if len(word) < 2 {
 				continue
 			}
+			fmt.Println("word", word)
 
 			// fmt.Printf("word len %d", len(word))
 
