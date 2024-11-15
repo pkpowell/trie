@@ -95,7 +95,7 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 
 			word, _, err := transform.String(t, word)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("transform error", err)
 				continue
 			}
 
