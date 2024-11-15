@@ -81,7 +81,7 @@ func (root *Node) ParseText(text string) {
 				continue
 			}
 
-			fmt.Printf("word len %d", len(word))
+			// fmt.Printf("word len %d", len(word))
 
 			word, _, err := transform.String(t, word)
 			if err != nil {
