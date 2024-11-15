@@ -49,6 +49,7 @@ func New(opts *Options) *Node {
 		WordCount: 0,
 		Lines:     make(Lines),
 		options:   opts,
+		mtx:       new(sync.RWMutex),
 	}
 }
 
