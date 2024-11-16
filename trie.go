@@ -27,7 +27,7 @@ type Node struct {
 	IsEnd     bool             `json:"isEnd"`
 	Count     int              `json:"count"`
 	WordCount int              `json:"wordCount"`
-	Lines     Lines            `json:"line"`
+	Lines     Lines            `json:"lines"`
 	options   *Options         `json:"-"`
 	mtx       *sync.RWMutex    `json:"-"`
 }
