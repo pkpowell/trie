@@ -292,7 +292,7 @@ func (root *Node) SearchItem(word string) []Item {
 		}
 		node = node.Children[string(letter)]
 	}
-	fmt.Println("found word", node)
+	// fmt.Println("found word", node)
 	return node.Meta.Items
 	// return current.isEnd
 }
