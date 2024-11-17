@@ -172,6 +172,59 @@ func TestTrieMuchAdo(t *testing.T) {
 	}
 }
 
+type Device struct {
+	ID string `json:"id"`
+}
+
+func TestParseItem(t *testing.T) {
+	trie := New(&Options{IgnoreDiacritics: false})
+
+	trie.ParseItem("123-123-123", TechnicalReplacer, Item{
+		Description: "momerath device id",
+		Path:        "/devices/213-123-123",
+	})
+	trie.ParseItem("onetwothree.local", TechnicalReplacer, Item{
+		Description: "momerath device hostname",
+		Path:        "/devices/213-123-123",
+	})
+	trie.ParseItem("powell", StandardReplacer, Item{
+		Description: "phil surname",
+		Path:        "/people/phil",
+	})
+	trie.ParseItem("phil", StandardReplacer, Item{
+		Description: "phil first name",
+		Path:        "/people/phil",
+	})
+	trie.ParseItem("phil.local", TechnicalReplacer, Item{
+		Description: "phil hostname",
+		Path:        "/devices/phil-123-456",
+	})
+	trie.Stats()
+	testWords := []string{
+		"123",
+		"Phil",
+		"two",
+		"pow",
+		"dverga",
+		"kømr",
+		"annarr",
+		"vindheim",
+	}
+
+	for _, word := range testWords {
+		items := trie.SearchItem(word)
+		if items != nil {
+			t.Logf("Found %d items containing %s ", len(items), word)
+			for _, item := range items {
+				t.Logf("path %s, description %s", item.Path, item.Description)
+			}
+		}
+		// t.Logf("Found %d words containing %s ", total, word)
+		// if len(ln) > 0 {
+		// 	t.Logf("at line %s", printLineNumbers(ln))
+		// }
+	}
+}
 func TestTrieEdda(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: false})
 
@@ -355,7 +408,7 @@ func BenchmarkToLower(b *testing.B) {
 	}
 }
 func BenchmarkCaser(b *testing.B) {
-	transf = transform.Chain(cases.Lower(language.English))
+	transf := transform.Chain(cases.Lower(language.English))
 	word := "BigWord"
 
 	for range b.N {
@@ -363,7 +416,7 @@ func BenchmarkCaser(b *testing.B) {
 	}
 }
 func BenchmarkBoth1(b *testing.B) {
-	transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
+	transf := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
 	word := "þá mun Friggjar falla Angantýr."
 
 	for range b.N {
@@ -371,7 +424,7 @@ func BenchmarkBoth1(b *testing.B) {
 	}
 }
 func BenchmarkBoth2(b *testing.B) {
-	transf = transform.Chain(cases.Lower(language.English), norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
+	transf := transform.Chain(cases.Lower(language.English), norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC)
 	word := "þá mun Friggjar falla Angantýr."
 
 	for range b.N {

@@ -11,27 +11,49 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"golang.org/x/text/runes"
-	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
 
 type Options struct {
-	// CaseSensitive    bool
 	IgnoreDiacritics bool
 	Replacer         *strings.Replacer
 }
-type Lines map[int]int
 
-type Node struct {
-	Children  map[string]*Node `json:"children"`
-	IsEnd     bool             `json:"isEnd"`
-	Count     int              `json:"count"`
-	WordCount int              `json:"wordCount"`
-	Lines     Lines            `json:"lines"`
-	options   *Options         `json:"-"`
-	mtx       *sync.RWMutex    `json:"-"`
+type Item struct {
+	// Category    string `json:"type:omitempty"`
+	Path        string `json:"path:omitempty"`
+	Description string `json:"description:omitempty"`
+	// ID          string `json:"id:omitempty"`
 }
 
+type Meta struct {
+	Word  string `json:"word:omitempty"`
+	Items []Item `json:"items:omitempty"`
+}
+
+type Node struct {
+	Children    Children                 `json:"children:omitempty"`
+	IsEnd       bool                     `json:"isEnd"`
+	Meta        *Meta                    `json:"meta:omitempty"`
+	Count       int                      `json:"count:omitempty"`
+	WordCount   int                      `json:"wordCount:omitempty"`
+	Lines       Lines                    `json:"lines:omitempty"`
+	options     *Options                 `json:"-"`
+	mtx         *sync.RWMutex            `json:"-"`
+	transformer func(word string) string `json:"-"`
+}
+
+type Lines map[int]int
+
+type Children map[string]*Node
+
+var newNode = New
+var Defaults = &Options{
+	IgnoreDiacritics: true,
+}
+var Opts = Defaults
+
+// var transf transform.Transformer
 var trans func(word string) string
 
 // New initializes a new Trie
@@ -40,7 +62,6 @@ func New(opts *Options) *Node {
 		trans = func(word string) string {
 			return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
 		}
-		// transf = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
 	} else {
 		trans = func(word string) string {
 			return norm.NFD.String(cases.Lower(language.English).String(word))
@@ -49,24 +70,19 @@ func New(opts *Options) *Node {
 	}
 
 	return &Node{
-		Children:  make(map[string]*Node),
+		Children:  make(Children),
 		IsEnd:     false,
 		Count:     0,
 		WordCount: 0,
 		Lines:     make(Lines),
-		options:   opts,
-		mtx:       new(sync.RWMutex),
+		Meta: &Meta{
+			Items: make([]Item, 0),
+		},
+		options:     opts,
+		mtx:         new(sync.RWMutex),
+		transformer: trans,
 	}
 }
-
-var newNode = New
-var Defaults = &Options{
-	IgnoreDiacritics: true,
-}
-
-var Opts = Defaults
-
-var transf transform.Transformer
 
 func (root *Node) ParseFile(filename string, replacer *strings.Replacer) {
 	b, err := os.ReadFile(filename)
@@ -74,6 +90,38 @@ func (root *Node) ParseFile(filename string, replacer *strings.Replacer) {
 		panic(err)
 	}
 	root.ParseText(string(b), replacer)
+}
+
+// ParseItem removes formatting and special characters before adding words to trie
+func (root *Node) ParseItem(text string, replacer *strings.Replacer, item Item) {
+	if root == nil {
+		fmt.Printf("root is nil")
+		return
+	}
+	if len(text) < 2 {
+		return
+	}
+	if replacer == nil {
+		replacer = StandardReplacer
+	}
+
+	lines := strings.Split(text, "\n")
+	for _, line := range lines {
+		words := strings.Split(replacer.Replace(line), " ")
+		for _, word := range words {
+			if len(word) < 2 {
+				continue
+			}
+
+			word := norm.NFC.String(trans(word))
+
+			for i := range len(word) {
+				root.update(word[i:], item)
+			}
+
+			root.WordCount += len(words)
+		}
+	}
 }
 
 // ParseText removes formatting and special characters before adding words to trie
@@ -102,7 +150,7 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 
 			// fmt.Printf("word len %d\n", len(word))
 
-			word := norm.NFC.String(trans(word))
+			word := root.transformer(word)
 
 			// word, _, err := transform.String(transf, word)
 			// if err != nil {
@@ -111,7 +159,7 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 			// }
 
 			for i := range len(word) {
-				root.update(word[i:], num)
+				root.updateWithLines(word[i:], num)
 			}
 
 		}
@@ -147,7 +195,29 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 //
 
 // Update updates a word in the trie
-func (root *Node) update(word string, num int) {
+func (root *Node) update(word string, item Item) {
+	root.mtx.Lock()
+	defer root.mtx.Unlock()
+
+	current := root
+
+	for _, letter := range word {
+		_, ok := current.Children[string(letter)]
+		if !ok {
+			current.Children[string(letter)] = newNode(&Options{IgnoreDiacritics: root.options.IgnoreDiacritics})
+		}
+		current = current.Children[string(letter)]
+
+	}
+	current.Meta = &Meta{
+		Word:  word,
+		Items: append(current.Meta.Items, item),
+	}
+	current.IsEnd = true
+}
+
+// Update updateWithLines a word in the trie and adds line information
+func (root *Node) updateWithLines(word string, num int) {
 	root.mtx.Lock()
 	defer root.mtx.Unlock()
 
@@ -162,6 +232,7 @@ func (root *Node) update(word string, num int) {
 		current.Count++
 		current.Lines[num+1]++
 	}
+
 	current.IsEnd = true
 }
 
@@ -169,16 +240,19 @@ func (root *Node) update(word string, num int) {
 func (root *Node) Search(word string) (total int, lines Lines) {
 	var letter rune
 	var ok bool
-	var err error
+	// var err error
 	var node = root
 
 	root.mtx.RLock()
 	defer root.mtx.RUnlock()
 
-	word, _, err = transform.String(transf, word)
-	if err != nil {
-		panic(err)
-	}
+	// fmt.Println("transf", transf)
+
+	word = root.transformer(word)
+	fmt.Println("searching word", word)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	for _, letter = range word {
 		_, ok = node.Children[string(letter)]
@@ -187,7 +261,38 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 		}
 		node = node.Children[string(letter)]
 	}
+	fmt.Println("found word", node.Meta.Word)
 	return node.Count, node.Lines
+	// return current.isEnd
+}
+
+// search for exact word
+func (root *Node) SearchItem(word string) []Item {
+	var letter rune
+	var ok bool
+	// var err error
+	var node = root
+
+	root.mtx.RLock()
+	defer root.mtx.RUnlock()
+
+	// fmt.Println("transf", transf)
+
+	word = root.transformer(word)
+	// fmt.Println("searching word", word)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	for _, letter = range word {
+		_, ok = node.Children[string(letter)]
+		if !ok {
+			return nil
+		}
+		node = node.Children[string(letter)]
+	}
+	// fmt.Println("found word", node.Meta.Word)
+	return node.Meta.Items
 	// return current.isEnd
 }
 
