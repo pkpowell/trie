@@ -179,27 +179,27 @@ type Device struct {
 func TestParseItem(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: false})
 
-	trie.ParseItem("123-123-123", TechnicalReplacer, Item{
+	trie.ParseItem("123-123-123", TechnicalReplacer, &Item{
 		Description: "momerath device id",
 		Path:        "/devices/213-123-123",
 	})
-	trie.ParseItem("onetwothree.local", TechnicalReplacer, Item{
+	trie.ParseItem("onetwothree.local", TechnicalReplacer, &Item{
 		Description: "momerath device hostname",
 		Path:        "/devices/213-123-123",
 	})
-	trie.ParseItem("powell", StandardReplacer, Item{
+	trie.ParseItem("powell", StandardReplacer, &Item{
 		Description: "phil surname",
 		Path:        "/people/phil",
 	})
-	trie.ParseItem("phil", StandardReplacer, Item{
+	trie.ParseItem("phil", StandardReplacer, &Item{
 		Description: "phil nickname",
 		Path:        "/people/phil",
 	})
-	trie.ParseItem("philip", StandardReplacer, Item{
+	trie.ParseItem("philip", StandardReplacer, &Item{
 		Description: "phil first name",
 		Path:        "/people/phil",
 	})
-	trie.ParseItem("phil.local", TechnicalReplacer, Item{
+	trie.ParseItem("phil.local", TechnicalReplacer, &Item{
 		Description: "phil hostname",
 		Path:        "/devices/phil-123-456",
 	})

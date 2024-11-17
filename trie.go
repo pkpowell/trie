@@ -27,8 +27,8 @@ type Item struct {
 }
 
 type Meta struct {
-	Word  string `json:"word:omitempty"`
-	Items []Item `json:"items:omitempty"`
+	Word  string  `json:"word:omitempty"`
+	Items []*Item `json:"items:omitempty"`
 }
 
 type Node struct {
@@ -76,7 +76,7 @@ func New(opts *Options) *Node {
 		WordCount: 0,
 		Lines:     make(Lines),
 		Meta: &Meta{
-			Items: make([]Item, 0),
+			Items: make([]*Item, 0),
 		},
 		options:     opts,
 		mtx:         new(sync.RWMutex),
@@ -93,7 +93,7 @@ func (root *Node) ParseFile(filename string, replacer *strings.Replacer) {
 }
 
 // ParseItem removes formatting and special characters before adding words to trie
-func (root *Node) ParseItem(text string, replacer *strings.Replacer, item Item) {
+func (root *Node) ParseItem(text string, replacer *strings.Replacer, item *Item) {
 	if root == nil {
 		fmt.Printf("root is nil")
 		return
@@ -126,37 +126,37 @@ func (root *Node) ParseItem(text string, replacer *strings.Replacer, item Item) 
 
 // ParseText removes formatting and special characters before adding words to trie
 func (root *Node) ParseText(text string, replacer *strings.Replacer) {
-	if root == nil {
+	// if root == nil {
+	// 	fmt.Printf("root is nil")
+	// 	return
+	// }
+	// if len(text) < 2 {
+	// 	return
+	// }
+	// if replacer == nil {
+	// 	replacer = StandardReplacer
+	// }
+
+	switch true {
+	case root == nil:
 		fmt.Printf("root is nil")
 		return
-	}
-	if len(text) < 2 {
+	case len(text) < 2:
 		return
-	}
-	if replacer == nil {
+		// return
+	case replacer == nil:
 		replacer = StandardReplacer
 	}
-	// root.mtx.Lock()
-	// defer root.mtx.Unlock()
 
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
-		words := strings.Split(replacer.Replace(line), " ")
+		words := strings.Split(root.transformer(line), " ")
 		for _, word := range words {
 			if len(word) < 2 {
 				continue
 			}
-			// fmt.Println("word", word)
 
-			// fmt.Printf("word len %d\n", len(word))
-
-			word := root.transformer(word)
-
-			// word, _, err := transform.String(transf, word)
-			// if err != nil {
-			// 	fmt.Println("transform error", err)
-			// 	continue
-			// }
+			// word := root.transformer(word)
 
 			for i := range len(word) {
 				root.updateWithLines(word[i:], num)
@@ -195,7 +195,7 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 //
 
 // Update updates a word in the trie
-func (root *Node) update(word string, item Item) {
+func (root *Node) update(word string, item *Item) {
 	root.mtx.Lock()
 	defer root.mtx.Unlock()
 
@@ -267,7 +267,7 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 }
 
 // search for exact word
-func (root *Node) SearchItem(word string) []Item {
+func (root *Node) SearchItem(word string) []*Item {
 	var letter rune
 	var ok bool
 	// var err error
