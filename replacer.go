@@ -5,8 +5,7 @@ import "strings"
 //	type Replacer struct {
 //		replacer *strings.Replacer
 //	}
-var StandardReplacer = strings.NewReplacer(standard...)
-var TechnicalReplacer = strings.NewReplacer(technical...)
+
 var standard = []string{
 	".", " ",
 	",", " ",
@@ -55,5 +54,8 @@ var technical = []string{
 	"\"", "",
 	// "'ll", "", //" will",
 }
+
+var StandardReplacer = strings.NewReplacer(standard...)
+var TechnicalReplacer = strings.NewReplacer(technical...)
 
 // var replacer = strings.NewReplacer(StandardReplacer...)

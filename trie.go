@@ -276,14 +276,7 @@ func (root *Node) SearchItem(word string) []*Item {
 	root.mtx.RLock()
 	defer root.mtx.RUnlock()
 
-	// fmt.Println("transf", transf)
-
-	word = strings.ToLower(word)
-	// word = root.transformer(word)
-	// fmt.Println("searching word", word)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	word = strings.ToLower(strings.Trim(word, " "))
 
 	for _, letter = range word {
 		_, ok = node.Children[string(letter)]
@@ -307,10 +300,6 @@ func (root *Node) Stats() {
 	root.mtx.RLock()
 	defer root.mtx.RUnlock()
 
-	// letters := len(root.Children)
-	// for _, node := range root.Children {
-	// 	letters += len(node.Children)
-	// }
 	data, err := json.Marshal(root)
 	if err != nil {
 		fmt.Println("json.Marshal error", err)
@@ -320,5 +309,4 @@ func (root *Node) Stats() {
 	fmt.Printf(("Memory: %d bytes\n"), len(data))
 	// fmt.Printf(("%d letters\n"), letters)
 	fmt.Printf(("%d words\n"), root.WordCount)
-
 }

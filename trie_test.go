@@ -176,14 +176,30 @@ type Device struct {
 	ID string `json:"id"`
 }
 
+func TestReplacer(t *testing.T) {
+	// 	str := `‘Hljóðs bið ek allar kindir,
+	// meiri ok minni, mǫgu Heimdallar! Vildu at ek, Valfǫðr, vel fyrtelja forn spjǫll fira, þau er fremst um man.
+	// `
+	str := "Übeltäter übergibt 'Ärzten' öfters äußerst ätzende Öle."
+	trans = func(word string) string {
+		return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
+	}
+	a := trans(str)
+	b := trans(str)
+
+	t.Log("str", str)
+	t.Log("a", a)
+	t.Log("b", b)
+}
+
 func TestParseItem(t *testing.T) {
 	trie := New(&Options{IgnoreDiacritics: false})
 
-	trie.ParseItem("123-123-123", TechnicalReplacer, &Item{
+	trie.ParseItem("123-123-123", StandardReplacer, &Item{
 		Description: "momerath device id",
 		Path:        "/devices/213-123-123",
 	})
-	trie.ParseItem("onetwothree.local", TechnicalReplacer, &Item{
+	trie.ParseItem("onetwothree.local", StandardReplacer, &Item{
 		Description: "momerath device hostname",
 		Path:        "/devices/213-123-123",
 	})
@@ -199,7 +215,7 @@ func TestParseItem(t *testing.T) {
 		Description: "phil first name",
 		Path:        "/people/phil",
 	})
-	trie.ParseItem("phil.local", TechnicalReplacer, &Item{
+	trie.ParseItem("phil.local", StandardReplacer, &Item{
 		Description: "phil hostname",
 		Path:        "/devices/phil-123-456",
 	})
@@ -222,6 +238,9 @@ func TestParseItem(t *testing.T) {
 			for _, item := range items {
 				t.Logf("path %s, description %s", item.Path, item.Description)
 			}
+		} else {
+			t.Logf("No items containing %s found", word)
+
 		}
 		// t.Logf("Found %d words containing %s ", total, word)
 		// if len(ln) > 0 {
