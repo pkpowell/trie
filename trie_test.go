@@ -192,6 +192,10 @@ func TestParseItem(t *testing.T) {
 		Path:        "/people/phil",
 	})
 	trie.ParseItem("phil", StandardReplacer, Item{
+		Description: "phil nickname",
+		Path:        "/people/phil",
+	})
+	trie.ParseItem("philip", StandardReplacer, Item{
 		Description: "phil first name",
 		Path:        "/people/phil",
 	})
@@ -202,7 +206,7 @@ func TestParseItem(t *testing.T) {
 	trie.Stats()
 	testWords := []string{
 		"123",
-		"Phil",
+		"phil",
 		"two",
 		"pow",
 		"dverga",

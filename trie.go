@@ -278,7 +278,8 @@ func (root *Node) SearchItem(word string) []Item {
 
 	// fmt.Println("transf", transf)
 
-	word = root.transformer(word)
+	word = strings.ToLower(word)
+	// word = root.transformer(word)
 	// fmt.Println("searching word", word)
 	// if err != nil {
 	// 	panic(err)
@@ -291,7 +292,7 @@ func (root *Node) SearchItem(word string) []Item {
 		}
 		node = node.Children[string(letter)]
 	}
-	// fmt.Println("found word", node.Meta.Word)
+	fmt.Println("found word", node)
 	return node.Meta.Items
 	// return current.isEnd
 }
