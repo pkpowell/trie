@@ -20,24 +20,23 @@ type Options struct {
 }
 
 type Item struct {
-	// Category    string `json:"type:omitempty"`
-	Path        string `json:"path:omitempty"`
-	Description string `json:"description:omitempty"`
-	// ID          string `json:"id:omitempty"`
+	// Category    string `json:"category,omitempty"`
+	Path        string `json:"path,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type Meta struct {
-	Word  string  `json:"word:omitempty"`
-	Items []*Item `json:"items:omitempty"`
+	Word  string  `json:"word,omitempty"`
+	Items []*Item `json:"items,omitempty"`
 }
 
 type Node struct {
-	Children    Children                 `json:"children:omitempty"`
+	Children    Children                 `json:"children,omitempty"`
 	IsEnd       bool                     `json:"isEnd"`
-	Meta        *Meta                    `json:"meta:omitempty"`
-	Count       int                      `json:"count:omitempty"`
-	WordCount   int                      `json:"wordCount:omitempty"`
-	Lines       Lines                    `json:"lines:omitempty"`
+	Meta        *Meta                    `json:"meta,omitempty"`
+	Count       int                      `json:"count,omitempty"`
+	WordCount   int                      `json:"wordCount,omitempty"`
+	Lines       Lines                    `json:"lines,omitempty"`
 	options     *Options                 `json:"-"`
 	mtx         *sync.RWMutex            `json:"-"`
 	transformer func(word string) string `json:"-"`
