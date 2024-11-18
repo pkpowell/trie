@@ -11,6 +11,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
 
@@ -26,15 +27,14 @@ type Item struct {
 	Description string `json:"description,omitempty"`
 }
 
-type Meta struct {
-	Word  string  `json:"word,omitempty"`
-	Items []*Item `json:"items,omitempty"`
-}
+// type Meta struct {
+// 	Word  string  `json:"word,omitempty"`
+// 	Items []*Item `json:"items,omitempty"`
+// }
 
 type Node struct {
 	Children    Children                 `json:"children,omitempty"`
-	IsEnd       bool                     `json:"isEnd"`
-	Meta        *Meta                    `json:"meta,omitempty"`
+	Items       []*Item                  `json:"items,omitempty"`
 	Count       int                      `json:"count,omitempty"`
 	WordCount   int                      `json:"wordCount,omitempty"`
 	Lines       Lines                    `json:"lines,omitempty"`
@@ -57,6 +57,9 @@ var Opts = Defaults
 // var transf transform.Transformer
 var trans func(word string) string
 
+var transDiacritics = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
+var transNoDiacritics = transform.Chain(norm.NFD, norm.NFKC, cases.Lower(language.English))
+
 // New initializes a new Trie
 func New(opts *Options) *Node {
 	if opts == nil {
@@ -64,6 +67,7 @@ func New(opts *Options) *Node {
 	}
 	if opts.IgnoreDiacritics {
 		trans = func(word string) string {
+
 			return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
 		}
 	} else {
@@ -73,14 +77,12 @@ func New(opts *Options) *Node {
 	}
 
 	return &Node{
-		Children:  make(Children),
-		IsEnd:     false,
-		Count:     0,
-		WordCount: 0,
-		Lines:     make(Lines),
-		Meta: &Meta{
-			Items: make([]*Item, 0),
-		},
+		Children: make(Children),
+		// IsEnd:       false,
+		Count:       0,
+		WordCount:   0,
+		Lines:       make(Lines),
+		Items:       make([]*Item, 0),
 		options:     opts,
 		mtx:         new(sync.RWMutex),
 		transformer: trans,
@@ -202,11 +204,9 @@ func (root *Node) update(word string, item *Item) {
 		current = current.Children[string(letter)]
 
 	}
-	current.Meta = &Meta{
-		Word:  word,
-		Items: append(current.Meta.Items, item),
-	}
-	current.IsEnd = true
+	current.Items = append(current.Items, item)
+
+	// current.IsEnd = true
 }
 
 // Update updateWithLines a word in the trie and adds line information
@@ -226,7 +226,7 @@ func (root *Node) updateWithLines(word string, num int) {
 		current.Lines[num+1]++
 	}
 
-	current.IsEnd = true
+	// current.IsEnd = true
 }
 
 // search for exact word
@@ -254,7 +254,7 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 		}
 		node = node.Children[string(letter)]
 	}
-	fmt.Println("found word", node.Meta.Word)
+	fmt.Println("found word", node.Items[0])
 	return node.Count, node.Lines
 	// return current.isEnd
 }
@@ -279,13 +279,13 @@ func (root *Node) SearchItem(word string) []*Item {
 		node = node.Children[string(letter)]
 	}
 
-	if len(node.Meta.Items) == 0 {
+	if len(node.Items) == 0 {
 		var extra = []*Item{}
 		var more func(n *Node)
 		more = func(n *Node) {
 			for _, n := range n.Children {
-				if n.Meta.Items != nil {
-					extra = append(extra, n.Meta.Items...)
+				if n.Items != nil {
+					extra = append(extra, n.Items...)
 					more(n)
 				}
 			}
@@ -296,7 +296,7 @@ func (root *Node) SearchItem(word string) []*Item {
 		return extra
 	}
 	// fmt.Println("found word", node.Meta.Items)
-	return node.Meta.Items
+	return node.Items
 	// return current.isEnd
 }
 
