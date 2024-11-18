@@ -202,36 +202,43 @@ func TestReplacer(t *testing.T) {
 }
 
 func TestParseItem(t *testing.T) {
-	trie := New(&Options{IgnoreDiacritics: false, MaxWordLength: 4})
+	trie := New(&Options{IgnoreDiacritics: true, MaxWordLength: 4})
 
 	trie.ParseItem("123-123-123", StandardReplacer, &Item{
 		Description: "momerath device id",
 		Path:        "/devices/213-123-123",
 	})
+
 	trie.ParseItem("onetwothree.local", StandardReplacer, &Item{
 		Description: "momerath device hostname",
 		Path:        "/devices/213-123-123",
 	})
+
 	trie.ParseItem("powell", StandardReplacer, &Item{
 		Description: "phil surname",
 		Path:        "/people/phil",
 	})
+
 	trie.ParseItem("phil", StandardReplacer, &Item{
 		Description: "phil nickname",
 		Path:        "/people/phil",
 	})
+
 	trie.ParseItem("philip", StandardReplacer, &Item{
 		Description: "phil first name",
 		Path:        "/people/phil",
 	})
+
 	trie.ParseItem("phil.local", StandardReplacer, &Item{
 		Description: "phil hostname",
 		Path:        "/devices/phil-123-456",
 	})
+
 	trie.ParseItem("Übeltäter übergibt 'Ärzten' öfters äußerst ätzende Öle.", StandardReplacer, &Item{
 		Description: "german phrase",
 		Path:        "/misc/words",
 	})
+
 	trie.Stats()
 	testWords := []string{
 		"123",
