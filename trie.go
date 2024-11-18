@@ -16,6 +16,7 @@ import (
 
 type Options struct {
 	IgnoreDiacritics bool
+	MaxWordLength    int
 	Replacer         *strings.Replacer
 }
 
@@ -49,6 +50,7 @@ type Children map[string]*Node
 var newNode = New
 var Defaults = &Options{
 	IgnoreDiacritics: true,
+	MaxWordLength:    3,
 }
 var Opts = Defaults
 
@@ -95,14 +97,14 @@ func (root *Node) ParseFile(filename string, replacer *strings.Replacer) {
 
 // ParseItem removes formatting and special characters before adding words to trie
 func (root *Node) ParseItem(text string, replacer *strings.Replacer, item *Item) {
-	if root == nil {
+	switch true {
+	case root == nil:
 		fmt.Printf("root is nil")
 		return
-	}
-	if len(text) < 2 {
+	case len(text) <= Opts.MaxWordLength:
 		return
-	}
-	if replacer == nil {
+		// return
+	case replacer == nil:
 		replacer = StandardReplacer
 	}
 
@@ -110,7 +112,7 @@ func (root *Node) ParseItem(text string, replacer *strings.Replacer, item *Item)
 	for _, line := range lines {
 		words := strings.Split(replacer.Replace(line), " ")
 		for _, word := range words {
-			if len(word) < 2 {
+			if len(word) < 3 {
 				continue
 			}
 
@@ -127,22 +129,12 @@ func (root *Node) ParseItem(text string, replacer *strings.Replacer, item *Item)
 
 // ParseText removes formatting and special characters before adding words to trie
 func (root *Node) ParseText(text string, replacer *strings.Replacer) {
-	// if root == nil {
-	// 	fmt.Printf("root is nil")
-	// 	return
-	// }
-	// if len(text) < 2 {
-	// 	return
-	// }
-	// if replacer == nil {
-	// 	replacer = StandardReplacer
-	// }
 
 	switch true {
 	case root == nil:
 		fmt.Printf("root is nil")
 		return
-	case len(text) < 2:
+	case len(text) <= Opts.MaxWordLength:
 		return
 		// return
 	case replacer == nil:
