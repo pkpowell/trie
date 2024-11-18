@@ -181,11 +181,20 @@ func TestReplacer(t *testing.T) {
 	// meiri ok minni, mǫgu Heimdallar! Vildu at ek, Valfǫðr, vel fyrtelja forn spjǫll fira, þau er fremst um man.
 	// `
 	str := "Übeltäter übergibt 'Ärzten' öfters äußerst ätzende Öle."
-	trans = func(word string) string {
-		return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
+	// var Tr = func() transform.Transformer {
+	// 	return transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	// }
+	// trans = func(word string) string {
+	// 	return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
+	// }
+	a, _, err := transform.String(ToLower(), str)
+	if err != nil {
+		t.Error(err)
 	}
-	a := trans(str)
-	b := trans(str)
+	b, _, err := transform.String(RemoveDiacritics(), str)
+	if err != nil {
+		t.Error(err)
+	}
 
 	t.Log("str", str)
 	t.Log("a", a)

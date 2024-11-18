@@ -33,14 +33,15 @@ type Item struct {
 // }
 
 type Node struct {
-	Children    Children                 `json:"children,omitempty"`
-	Items       []*Item                  `json:"items,omitempty"`
-	Count       int                      `json:"count,omitempty"`
-	WordCount   int                      `json:"wordCount,omitempty"`
-	Lines       Lines                    `json:"lines,omitempty"`
-	options     *Options                 `json:"-"`
-	mtx         *sync.RWMutex            `json:"-"`
-	transformer func(word string) string `json:"-"`
+	Children    Children                     `json:"children,omitempty"`
+	Items       []*Item                      `json:"items,omitempty"`
+	Count       int                          `json:"count,omitempty"`
+	WordCount   int                          `json:"wordCount,omitempty"`
+	Lines       Lines                        `json:"lines,omitempty"`
+	options     *Options                     `json:"-"`
+	mtx         *sync.RWMutex                `json:"-"`
+	transformer func() transform.Transformer `json:"-"`
+	// transformer func(word string) string `json:"-"`
 }
 
 type Lines map[int]int
@@ -55,10 +56,17 @@ var Defaults = &Options{
 var Opts = Defaults
 
 // var transf transform.Transformer
-var trans func(word string) string
+var trans func() transform.Transformer
 
 var transDiacritics = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFKC, cases.Lower(language.English))
 var transNoDiacritics = transform.Chain(norm.NFD, norm.NFKC, cases.Lower(language.English))
+
+var ToLower = func() transform.Transformer {
+	return transform.Chain(norm.NFD, cases.Lower(language.English))
+}
+var RemoveDiacritics = func() transform.Transformer {
+	return transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), cases.Lower(language.English))
+}
 
 // New initializes a new Trie
 func New(opts *Options) *Node {
@@ -66,14 +74,9 @@ func New(opts *Options) *Node {
 		opts = Defaults
 	}
 	if opts.IgnoreDiacritics {
-		trans = func(word string) string {
-
-			return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
-		}
+		trans = RemoveDiacritics
 	} else {
-		trans = func(word string) string {
-			return norm.NFD.String(cases.Lower(language.English).String(word))
-		}
+		trans = ToLower
 	}
 
 	return &Node{
@@ -117,8 +120,11 @@ func (root *Node) ParseItem(text string, replacer *strings.Replacer, item *Item)
 			if len(word) < 3 {
 				continue
 			}
-
-			word := norm.NFC.String(trans(word))
+			word, _, err := transform.String(ToLower(), word)
+			if err != nil {
+				panic(err)
+			}
+			// word := norm.NFC.String(trans(word))
 
 			for i := range len(word) {
 				root.update(word[i:], item)
@@ -150,8 +156,11 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 			if len(word) < 2 {
 				continue
 			}
-
-			word := root.transformer(word)
+			word, _, err := transform.String(ToLower(), word)
+			if err != nil {
+				panic(err)
+			}
+			// word := root.transformer(word)
 
 			for i := range len(word) {
 				root.updateWithLines(word[i:], num)
@@ -240,8 +249,11 @@ func (root *Node) Search(word string) (total int, lines Lines) {
 	defer root.mtx.RUnlock()
 
 	// fmt.Println("transf", transf)
-
-	word = root.transformer(word)
+	word, _, err := transform.String(ToLower(), word)
+	if err != nil {
+		panic(err)
+	}
+	// word = root.transformer(word)
 	fmt.Println("searching word", word)
 	// if err != nil {
 	// 	panic(err)
