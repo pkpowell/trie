@@ -223,7 +223,9 @@ func TestParseItem(t *testing.T) {
 	testWords := []string{
 		"123",
 		"phil",
+		"one",
 		"two",
+		"three",
 		"pow",
 		"dverga",
 		"kømr",

@@ -58,6 +58,9 @@ var trans func(word string) string
 
 // New initializes a new Trie
 func New(opts *Options) *Node {
+	if opts == nil {
+		opts = Defaults
+	}
 	if opts.IgnoreDiacritics {
 		trans = func(word string) string {
 			return norm.NFD.String(runes.Remove(runes.In(unicode.Mn)).String(cases.Lower(language.English).String(word)))
@@ -66,7 +69,6 @@ func New(opts *Options) *Node {
 		trans = func(word string) string {
 			return norm.NFD.String(cases.Lower(language.English).String(word))
 		}
-		opts = Defaults
 	}
 
 	return &Node{
@@ -150,13 +152,13 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 
 	lines := strings.Split(text, "\n")
 	for num, line := range lines {
-		words := strings.Split(root.transformer(line), " ")
+		words := strings.Split(replacer.Replace(line), " ")
 		for _, word := range words {
 			if len(word) < 2 {
 				continue
 			}
 
-			// word := root.transformer(word)
+			word := root.transformer(word)
 
 			for i := range len(word) {
 				root.updateWithLines(word[i:], num)
@@ -271,11 +273,11 @@ func (root *Node) SearchItem(word string) []*Item {
 	var letter rune
 	var ok bool
 	// var err error
-	var node = root
 
 	root.mtx.RLock()
 	defer root.mtx.RUnlock()
 
+	var node = root
 	word = strings.ToLower(strings.Trim(word, " "))
 
 	for _, letter = range word {
@@ -285,7 +287,24 @@ func (root *Node) SearchItem(word string) []*Item {
 		}
 		node = node.Children[string(letter)]
 	}
-	// fmt.Println("found word", node)
+
+	if len(node.Meta.Items) == 0 {
+		var extra = []*Item{}
+		var more func(n *Node)
+		more = func(n *Node) {
+			for _, n := range n.Children {
+				if n.Meta.Items != nil {
+					extra = append(extra, n.Meta.Items...)
+					more(n)
+				}
+			}
+		}
+		more(node)
+
+		// fmt.Println("found extra words", extra[0].Description)
+		return extra
+	}
+	// fmt.Println("found word", node.Meta.Items)
 	return node.Meta.Items
 	// return current.isEnd
 }
