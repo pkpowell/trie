@@ -101,7 +101,7 @@ func (root *Node) ParseItem(text string, replacer *strings.Replacer, item *Item)
 	case root == nil:
 		fmt.Printf("root is nil")
 		return
-	case len(text) <= Opts.MaxWordLength:
+	case len(text) <= root.options.MaxWordLength:
 		return
 		// return
 	case replacer == nil:
@@ -134,7 +134,7 @@ func (root *Node) ParseText(text string, replacer *strings.Replacer) {
 	case root == nil:
 		fmt.Printf("root is nil")
 		return
-	case len(text) <= Opts.MaxWordLength:
+	case len(text) <= root.options.MaxWordLength:
 		return
 		// return
 	case replacer == nil:

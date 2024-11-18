@@ -193,7 +193,7 @@ func TestReplacer(t *testing.T) {
 }
 
 func TestParseItem(t *testing.T) {
-	trie := New(&Options{IgnoreDiacritics: false})
+	trie := New(&Options{IgnoreDiacritics: false, MaxWordLength: 4})
 
 	trie.ParseItem("123-123-123", StandardReplacer, &Item{
 		Description: "momerath device id",
