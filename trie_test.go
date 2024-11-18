@@ -219,6 +219,10 @@ func TestParseItem(t *testing.T) {
 		Description: "phil hostname",
 		Path:        "/devices/phil-123-456",
 	})
+	trie.ParseItem("Übeltäter übergibt 'Ärzten' öfters äußerst ätzende Öle.", StandardReplacer, &Item{
+		Description: "german phrase",
+		Path:        "/misc/words",
+	})
 	trie.Stats()
 	testWords := []string{
 		"123",
@@ -227,7 +231,8 @@ func TestParseItem(t *testing.T) {
 		"two",
 		"three",
 		"pow",
-		"dverga",
+		"öfters",
+		"ofters",
 		"kømr",
 		"annarr",
 		"vindheim",
