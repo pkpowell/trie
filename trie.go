@@ -44,9 +44,9 @@ type Node struct {
 	// transformer func(word string) string `json:"-"`
 }
 
-type Lines map[int]int
-
 type Children map[string]*Node
+
+type Lines map[int]int
 
 var newNode = New
 var Defaults = &Options{
